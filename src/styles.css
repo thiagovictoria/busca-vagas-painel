@@ -94,6 +94,7 @@ textarea{min-height:96px;resize:vertical;width:100%}
 .menu-pop{position:absolute;right:0;top:44px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.18);padding:8px;min-width:240px;z-index:20}
 .menu-pop p{margin:4px 8px 8px;font-size:13px;color:var(--mute);overflow-wrap:anywhere}
 .menu-pop .btn{width:100%;justify-content:flex-start}
+.menu-pop .btn:hover{background:var(--alert-soft);color:var(--alert-ink);border-color:transparent}
 
 /* numeros */
 .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding-top:20px}
@@ -110,6 +111,8 @@ textarea{min-height:96px;resize:vertical;width:100%}
 .bar-top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;min-height:42px}
 .chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:0 14px;min-height:36px;font-size:14px;font-weight:500;color:var(--ink)}
+.chip{transition:background .15s,border-color .15s,color .15s}
+.chip:not([aria-pressed=true]):hover{background:var(--surface-2);border-color:var(--primary);color:var(--primary-text)}
 .chip .n{font-weight:600;font-size:12px;padding:0 7px;border-radius:99px;background:var(--surface-2);color:var(--mute)}
 .chip[aria-pressed=true]{background:var(--primary-soft);border-color:var(--primary);color:var(--primary-text)}
 .chip[aria-pressed=true] .n{background:var(--primary);color:var(--primary-ink)}
