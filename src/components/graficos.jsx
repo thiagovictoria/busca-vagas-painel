@@ -147,3 +147,53 @@ export function Anel({ nota, cor, grande = false }) {
     </div>
   );
 }
+
+/**
+ * Rosca interativa. fatias: [{k, nome, cor, valor}]
+ * Passe o mouse (ou toque) numa fatia ou na legenda: o centro mostra a quantidade e o %.
+ */
+export function Rosca({ fatias, rotuloTotal = "vagas" }) {
+  const [foco, setFoco] = useState(null);
+  const total = fatias.reduce((t, f) => t + f.valor, 0);
+  const R = 72, C = 2 * Math.PI * R, GAP = 2.5;
+  let acum = 0;
+  const visiveis = fatias.filter((f) => f.valor > 0);
+  const pct = (v) => (total ? Math.round((v / total) * 100) : 0);
+  const atual = foco && fatias.find((f) => f.k === foco);
+  return (
+    <div className="rosca" onMouseLeave={() => setFoco(null)}>
+      <svg viewBox="0 0 200 200" role="img" aria-label={`Rosca com ${total} ${rotuloTotal}`}>
+        <circle cx="100" cy="100" r={R} fill="none" stroke="var(--surface-2)" strokeWidth="26" />
+        {visiveis.map((f) => {
+          const len = (f.valor / total) * C;
+          const ini = acum;
+          acum += len;
+          const ativo = foco === f.k;
+          return (
+            <circle key={f.k} cx="100" cy="100" r={R} fill="none" stroke={f.cor}
+              strokeWidth={ativo ? 32 : 26}
+              strokeDasharray={`${Math.max(0, len - (visiveis.length > 1 ? GAP : 0))} ${C}`}
+              strokeDashoffset={-ini} transform="rotate(-90 100 100)"
+              opacity={foco && !ativo ? 0.35 : 1}
+              style={{ transition: "stroke-width .15s, opacity .15s", cursor: "pointer" }}
+              onMouseEnter={() => setFoco(f.k)} onTouchStart={() => setFoco(f.k)} />
+          );
+        })}
+        <text x="100" y="98" textAnchor="middle" className="rosca-n">{atual ? atual.valor : total}</text>
+        <text x="100" y="120" textAnchor="middle" className="rosca-l">
+          {atual ? `${atual.nome} · ${pct(atual.valor)}%` : rotuloTotal}
+        </text>
+      </svg>
+      <ul className="rosca-leg">
+        {fatias.map((f) => (
+          <li key={f.k} className={foco === f.k ? "on" : ""} onMouseEnter={() => setFoco(f.k)} onClick={() => setFoco(foco === f.k ? null : f.k)}>
+            <i style={{ background: f.cor }} />
+            <span>{f.nome}</span>
+            <b>{f.valor}</b>
+            <small>{pct(f.valor)}%</small>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}

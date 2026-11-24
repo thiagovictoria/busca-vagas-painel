@@ -1,30 +1,17 @@
 import { useState } from "react";
-import { COR_REC, ETAPA, SERIES_REC, SITUACOES } from "../config.js";
+import { COR_REC, SERIES_REC, SITUACOES } from "../config.js";
 import { fLocal, fModalidade } from "../format.js";
-import { Anel, Barras, Colunas, Legenda } from "./graficos.jsx";
+import { Anel, Barras, Colunas, Legenda, Rosca } from "./graficos.jsx";
 
-const FUNIL = [[0, "Encontradas"], [2, "Inscrito"], [3, "Em análise"], [4, "Case ou entrevista"], [5, "Proposta"], [6, "Contratado"]];
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-
-// Resultado de cada vaga: da avaliacao da IA ou da sua inscricao
-const SERIES_SITUACAO = [
-  { k: "inscrito", nome: "Inscrito", cor: "var(--s1)" },
-  { k: "avaliar", nome: "Para avaliar", cor: "var(--s3)" },
-  { k: "descartada", nome: "Descartada", cor: "var(--s2)" },
-  { k: "fora", nome: "Eliminada ou encerrada", cor: "var(--s4)" },
-];
-function situacao(it) {
-  if ((ETAPA[it.status] ?? 0) >= 1) return "inscrito";
-  if (it.status === "descartada") return "descartada";
-  if (SITUACOES.avaliar.f(it)) return "avaliar";
-  return "fora";
-}
+const SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
+const dd = (n) => String(n).padStart(2, "0");
 
 const dataVista = (it) => new Date(it.vaga.primeiro_visto_em || it.vaga.publicado_em);
 
 // Categorias do grafico conforme o periodo: dias (14 ou 30) ou os 12 meses de um ano
 function montarPeriodo(periodo) {
-  if (periodo === "14" || periodo === "30") {
+  if (periodo === "7" || periodo === "30") {
     const n = Number(periodo);
     const hoje = new Date();
     hoje.setHours(0, 0, 0, 0);
@@ -33,8 +20,8 @@ function montarPeriodo(periodo) {
       d.setDate(d.getDate() - (n - 1 - i));
       return {
         rotulo: String(d.getDate()),
-        grupo: `${MESES[d.getMonth()]} ${d.getFullYear()}`,
-        dica: d.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "long", year: "numeric" }),
+        grupo: `${MESES[d.getMonth()]}/${d.getFullYear()}`,
+        dica: `${dd(d.getDate())}/${dd(d.getMonth() + 1)}/${d.getFullYear()} (${SEMANA[d.getDay()]})`,
         valores: {},
         ini: d,
       };
@@ -50,7 +37,7 @@ function montarPeriodo(periodo) {
   const ano = Number(periodo);
   const cats = MESES.map((m, i) => ({
     rotulo: m,
-    dica: new Date(ano, i, 1).toLocaleDateString("pt-BR", { month: "long", year: "numeric" }),
+    dica: `${m}/${ano}`,
     valores: {},
   }));
   const indice = (dt) => (dt.getFullYear() === ano ? dt.getMonth() : -1);
@@ -59,16 +46,15 @@ function montarPeriodo(periodo) {
 
 export default function VisaoGeral({ itens, onAbrir }) {
   const anos = [...new Set(itens.map((i) => dataVista(i).getFullYear()))].sort((a, b) => b - a);
-  const [periodo, setPeriodo] = useState("14");
-  const [cor, setCor] = useState("rec");
+  const [periodo, setPeriodo] = useState("7");
 
   // --- vagas encontradas no periodo ---
   const { cats, indice, titulo } = montarPeriodo(periodo);
-  const series = cor === "rec" ? SERIES_REC : SERIES_SITUACAO;
+  const series = SERIES_REC;
   for (const it of itens) {
     const i = indice(dataVista(it));
     if (i < 0) continue;
-    const k = cor === "rec" ? it.vaga.match_recomendacao || "pular" : situacao(it);
+    const k = it.vaga.match_recomendacao || "pular";
     cats[i].valores[k] = (cats[i].valores[k] || 0) + 1;
   }
 
@@ -81,8 +67,8 @@ export default function VisaoGeral({ itens, onAbrir }) {
   itens.map((i) => i.vaga.nota_match).filter((n) => n != null)
     .forEach((n) => faixas[Math.min(9, Math.floor(n / 10))].valores.n++);
 
-  // --- funil ---
-  const funil = FUNIL.map(([k, rotulo]) => ({ rotulo, valor: itens.filter((i) => (ETAPA[i.status] ?? 0) >= k).length }));
+  // --- vagas por recomendacao (rosca) ---
+  const fatias = SERIES_REC.map((s) => ({ ...s, valor: itens.filter((i) => (i.vaga.match_recomendacao || "pular") === s.k).length }));
 
   // --- melhores para avaliar ---
   const melhores = itens
@@ -105,14 +91,10 @@ export default function VisaoGeral({ itens, onAbrir }) {
         <div className="phead">
           <h3>Vagas encontradas {titulo}</h3>
           <div className="pctl">
-            <select aria-label="Cores por" value={cor} onChange={(e) => setCor(e.target.value)}>
-              <option value="rec">Avaliação da IA</option>
-              <option value="sit">Resultado (inscrição)</option>
-            </select>
             <select aria-label="Período" value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-              <option value="14">Últimos 14 dias</option>
+              <option value="7">Últimos 7 dias</option>
               <option value="30">Últimos 30 dias</option>
-              {anos.map((a) => <option key={a} value={String(a)}>Ano {a}</option>)}
+              {anos.map((a) => <option key={a} value={String(a)}>{a}</option>)}
             </select>
           </div>
         </div>
@@ -161,8 +143,8 @@ export default function VisaoGeral({ itens, onAbrir }) {
       </section>
 
       <section className="panel">
-        <h3>Andamento das candidaturas</h3>
-        <Barras itens={funil} preencher />
+        <h3>Vagas por recomendação da IA</h3>
+        <Rosca fatias={fatias} rotuloTotal="vagas encontradas" />
       </section>
 
       <section className="panel">
