@@ -1,8 +1,8 @@
 # Garimpo
 
-_As melhores vagas, garimpadas e avaliadas para você._
+_Menos cascalho. Mais vagas que valem ouro._
 
-Marca: uma gema lapidada com um brilho (a vaga boa separada do cascalho), sobre o verde-petróleo da marca. Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
+Marca ("Pepita"): uma pepita de ouro lapidada com um brilho, sobre grafite; letra Sora; cores grafite #17181c, ouro #e8a314, brilho #ffd36b, sombra #c7850a, papel #f6f4ef. Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
 
 
 Painel em **React + CSS** (Vite) para avaliar vagas e acompanhar candidaturas.
@@ -49,10 +49,11 @@ Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):
 |---|---|---|
 | Superfícies | `--bg`, `--surface`, `--surface-2`, `--line` | fundo, cartões, realces, bordas |
 | Texto | `--ink`, `--mute`, `--faint` | principal, secundário, eixos |
-| Marca | `--primary`, `--primary-ink`, `--primary-soft` | botões, aba ativa, seleção |
+| Marca | `--primary` (ouro), `--primary-ink` (grafite), `--primary-text`, `--primary-soft` | botões, aba ativa, seleção, textos em ouro legíveis |
+| Gráficos | `--bar` | barras de uma série só (o ouro fica para destaque) |
 | Dados | `--s1` candidatar, `--s2` avaliar, `--s3` pular, `--s4` eliminado | gráficos e etiquetas (validadas para daltonismo) |
 
-Raio 12px nos cartões e 10px nos controles; fontes Inter Tight (títulos) e Inter (texto).
+Raio 12px nos cartões e 10px nos controles; fontes Sora (títulos e números) e Inter (texto), empacotadas no site.
 
 ## Rodar no seu PC (opcional)
 

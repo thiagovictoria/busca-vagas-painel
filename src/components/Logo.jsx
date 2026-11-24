@@ -1,28 +1,24 @@
-// Marca "Garimpo": uma gema lapidada (a vaga boa, separada do cascalho) com um brilho.
-// fundo = cor da marca; facetas em tons claros; brilho em verde-claro.
-export function Simbolo({ tamanho = 32, fundo = "var(--primary)", claro = "#ffffff", brilho = "#b9f5d0" }) {
+// Marca "garimpo" — caminho B, "Pepita": uma pepita de ouro lapidada com um brilho,
+// sobre grafite. A pepita e a vaga que vale ouro, separada do cascalho.
+export function Simbolo({ tamanho = 32, fundo = "#17181c" }) {
   return (
-    <svg width={tamanho} height={tamanho} viewBox="0 0 32 32" aria-hidden="true">
-      <rect width="32" height="32" rx="9" fill={fundo} />
-      {/* coroa */}
-      <path d="M7.5 12.5 11.5 8h9l4 4.5z" fill={claro} opacity=".95" />
-      {/* pavilhao */}
-      <path d="M7.5 12.5h17L16 25z" fill={claro} opacity=".72" />
-      {/* lapidacao */}
-      <path d="M11.5 8 13.6 12.5 16 25M20.5 8 18.4 12.5 16 25M7.5 12.5h17M13.6 12.5 16 8l2.4 4.5"
-        fill="none" stroke={fundo} strokeWidth="1.1" strokeLinejoin="round" opacity=".55" />
-      {/* brilho */}
-      <path d="M25 4.2c.3 1.6.9 2.2 2.5 2.5-1.6.3-2.2.9-2.5 2.5-.3-1.6-.9-2.2-2.5-2.5 1.6-.3 2.2-.9 2.5-2.5z" fill={brilho} />
+    <svg width={tamanho} height={tamanho} viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="16" fill={fundo} />
+      <path d="M15 33 23 19 39 15.5 50 26 47 43 33 50.5 19 45z" fill="#e8a314" />
+      <path d="M15 33 23 19 39 15.5 32 31z" fill="#ffd36b" />
+      <path d="M39 15.5 50 26 47 43 32 31z" fill="#c7850a" />
+      <path d="M15 33 32 31 33 50.5 19 45z" fill="#f2b52b" />
+      <path d="M53 8.5c.4 2.3 1.3 3.2 3.6 3.6-2.3.4-3.2 1.3-3.6 3.6-.4-2.3-1.3-3.2-3.6-3.6 2.3-.4 3.2-1.3 3.6-3.6z" fill="#fff6d8" />
     </svg>
   );
 }
 
-// simbolo + nome
-export default function Logo({ tamanho = 32, nomeClasse = "" }) {
+// simbolo + nome (Sora 800, minusculo)
+export default function Logo({ tamanho = 34 }) {
   return (
     <span className="logo">
-      <Simbolo tamanho={tamanho} />
-      <span className={"logo-nome " + nomeClasse}>garimpo</span>
+      <Simbolo tamanho={tamanho} fundo="#26272d" />
+      <span className="logo-nome">garimpo</span>
     </span>
   );
 }

@@ -25,7 +25,7 @@ export default function Resumo({ itens }) {
   const paraAvaliar = itens.filter(SITUACOES.avaliar.f);
   const blocos = [
     ["lupa", "var(--mute)", itens.length, "Vagas encontradas"],
-    ["lista", "var(--primary)", paraAvaliar.length, "Para avaliar"],
+    ["lista", "var(--sombra)", paraAvaliar.length, "Para avaliar"],
     ["check", "var(--s3)", itens.filter((i) => (ETAPA[i.status] ?? 0) >= 2).length, "Inscrições feitas"],
     ["conversa", "var(--s2)", itens.filter((i) => ["em_analise", "case", "entrevista", "proposta"].includes(i.status)).length, "Em processo seletivo"],
   ];

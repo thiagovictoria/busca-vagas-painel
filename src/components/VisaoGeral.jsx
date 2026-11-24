@@ -136,7 +136,7 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSe
 
           <section className="panel w4 l2">
             <h3>Distribuição das notas</h3>
-            <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]}
+            <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--bar)" }]}
               selecionado={sel.nota} onSelecionar={alternar("nota")} />
           </section>
 

@@ -113,7 +113,7 @@ export function Colunas({ categorias, series, altura, unidade = "vagas", selecio
 }
 
 /** Barras horizontais simples (HTML). itens: [{rotulo, valor, dica?}] */
-export function Barras({ itens, cor = "var(--primary)", preencher = false, selecionado = null, onSelecionar }) {
+export function Barras({ itens, cor = "var(--bar)", preencher = false, selecionado = null, onSelecionar }) {
   const max = Math.max(1, ...itens.map((i) => i.valor));
   return (
     <div className={"hbars" + (preencher ? " fill" : "")}>
