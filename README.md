@@ -2,7 +2,7 @@
 
 _Menos cascalho. Mais vagas que valem ouro._
 
-Marca ("Pepita"): uma pepita de ouro lapidada com um brilho, sobre grafite; letra Sora; cores grafite #17181c, ouro #e8a314, brilho #ffd36b, sombra #c7850a, papel #f6f4ef. Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
+Marca ("Pepita"): uma pepita de ouro lapidada, com facetas separadas por linhas grafite, e um brilho, sobre grafite; letra Sora; cores grafite #17181c, ouro #e8a314, brilho #ffd36b, sombra #c7850a, papel #f6f4ef. Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
 
 
 Painel em **React + CSS** (Vite) para avaliar vagas e acompanhar candidaturas.
@@ -51,7 +51,7 @@ Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):
 | Texto | `--ink`, `--mute`, `--faint` | principal, secundário, eixos |
 | Marca | `--primary` (ouro), `--primary-ink` (grafite), `--primary-text`, `--primary-soft` | botões, aba ativa, seleção, textos em ouro legíveis |
 | Gráficos | `--bar` | barras de uma série só (o ouro fica para destaque) |
-| Dados | `--s1` candidatar, `--s2` avaliar, `--s3` pular, `--s4` eliminado | gráficos e etiquetas (validadas para daltonismo) |
+| Dados | `--s1` candidatar (ouro), `--s2` avaliar (verde), `--s3` pular (azul), `--s4` eliminado (vermelho) | gráficos e etiquetas (validadas para daltonismo) |
 
 Raio 12px nos cartões e 10px nos controles; fontes Sora (títulos e números) e Inter (texto), empacotadas no site.
 

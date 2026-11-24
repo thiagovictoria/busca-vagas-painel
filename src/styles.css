@@ -8,8 +8,8 @@
    superfícies: --bg (fundo) · --surface (cartão) · --surface-2 (realce suave) · --line (bordas)
    texto:       --ink (principal) · --mute (secundário) · --faint (eixos e dicas)
    marca:       --primary ouro (botões e destaques) · --primary-ink grafite (texto sobre o ouro) · --primary-text ouro escuro (texto em ouro legível) · --primary-soft (fundo de seleção)
-   gráficos:    --bar (barras de uma série só; o ouro fica para destaque)
-   dados:       --s1 candidatar · --s2 avaliar · --s3 pular · --s4 eliminado (e alertas)
+   gráficos:    --bar (barras de uma série só, em ouro)
+   dados:       --s1 candidatar (ouro) · --s2 avaliar (verde) · --s3 pular (azul) · --s4 eliminado (vermelho) — validadas para daltonismo
    raio 12px nos cartões, 10px nos controles, 999px em etiquetas; espaçamento em múltiplos de 4px. */
 :root{color-scheme:light dark;
   --bg:light-dark(#f6f4ef,#0f1012);--surface:light-dark(#ffffff,#17181c);--surface-2:light-dark(#f1eee6,#202127);
@@ -17,8 +17,8 @@
   --primary:light-dark(#e8a314,#f0b02a);--primary-hover:light-dark(#d4930c,#ffc24d);--primary-ink:#17181c;
   --primary-text:light-dark(#8a5d00,#ffc94d);--primary-soft:light-dark(#fdf1d6,#2e2512);
   --grafite:#17181c;--ouro:#e8a314;--brilho:#ffd36b;--sombra:#c7850a;
-  --bar:light-dark(#4a4b53,#cfc9bc);
-  --s1:light-dark(#0b8063,#1a9a77);--s2:light-dark(#d18c0a,#c98500);--s3:light-dark(#2a78d6,#3987e5);--s4:light-dark(#d9483b,#e0604c);
+  --bar:light-dark(#d99a0b,#c98500);
+  --s1:light-dark(#d99a0b,#c98500);--s2:light-dark(#0b8a6a,#1a9a77);--s3:light-dark(#2a78d6,#3987e5);--s4:light-dark(#d9483b,#e0604c);
   --alert-ink:light-dark(#b8321f,#ff8f7d);--alert-soft:light-dark(#fdeeec,#2c1a18);
   --grid:light-dark(#eeeae1,#202127);
   --shadow:0 1px 2px rgba(23,24,28,.05)}
