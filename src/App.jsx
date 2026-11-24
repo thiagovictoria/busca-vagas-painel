@@ -7,6 +7,7 @@ import VagaLinha from "./components/VagaLinha.jsx";
 import Detalhe from "./components/Detalhe.jsx";
 import Aviso from "./components/Aviso.jsx";
 import VisaoGeral from "./components/VisaoGeral.jsx";
+import { anosDasVagas, noPeriodo } from "./periodo.js";
 
 const ORDENS = {
   nota: (x, y) => (y.vaga.nota_match ?? -1) - (x.vaga.nota_match ?? -1) || ms(y.vaga.publicado_em) - ms(x.vaga.publicado_em),
@@ -36,6 +37,7 @@ export default function App() {
   const [erro, setErro] = useState("");
   const [aba, setAba] = useState(() => { const t = guardar.get("tab", "visao"); return ROTULO_ABAS.some(([k]) => k === t) ? t : "vagas"; });
   const [sit, setSit] = useState("avaliar");
+  const [periodo, setPeriodo] = useState(guardar.get("periodo", "7"));
   const [loc, setLoc] = useState("todas");
   const [mod, setMod] = useState("todos");
   const [atualizadoEm, setAtualizadoEm] = useState(null);
@@ -127,7 +129,8 @@ export default function App() {
     for (const k in SITUACOES) r[k] = itens.filter(SITUACOES[k].f);
     return r;
   }, [itens]);
-  const paraAvaliar = porSit.avaliar || [];
+  const anos = useMemo(() => anosDasVagas(itens), [itens]);
+  const itensPeriodo = useMemo(() => noPeriodo(itens, periodo), [itens, periodo]);
   const localidades = useMemo(() => unicos(itens.map((i) => fLocal(i.vaga))), [itens]);
   const modelos = useMemo(() => unicos(itens.map((i) => fModalidade(i.vaga.modalidade) || "Não informado")), [itens]);
 
@@ -190,12 +193,23 @@ export default function App() {
           </div>
         </div>
       </header>
-      <Resumo itens={itens} porSit={porSit} />
+      {aba === "visao" && (
+        <div className="wrap periodo">
+          <label>Período
+            <select value={periodo} onChange={(e) => { setPeriodo(e.target.value); guardar.set("periodo", e.target.value); }}>
+              <option value="7">Últimos 7 dias</option>
+              <option value="30">Últimos 30 dias</option>
+              {anos.map((a) => <option key={a} value={String(a)}>{a}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
+      <Resumo itens={aba === "visao" ? itensPeriodo : itens} />
 
       <main className="wrap" onClick={() => menu && setMenu(false)}>
         {aba === "visao" ? (
           erro ? <p className="empty" style={{ marginTop: 16 }}>Erro ao carregar: {erro}</p>
-          : <VisaoGeral itens={itens} onAbrir={setAberta} />
+          : <VisaoGeral itens={itensPeriodo} periodo={periodo} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
           <div className="bar-top">

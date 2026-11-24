@@ -1,52 +1,10 @@
-import { useState } from "react";
 import { COR_REC, SERIES_REC, SITUACOES } from "../config.js";
 import { fLocal, fModalidade } from "../format.js";
 import { Anel, Barras, Colunas, Legenda, Rosca } from "./graficos.jsx";
+import { dataVista, montarPeriodo, nomePeriodo } from "../periodo.js";
 
-const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-const SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
-const dd = (n) => String(n).padStart(2, "0");
-
-const dataVista = (it) => new Date(it.vaga.primeiro_visto_em || it.vaga.publicado_em);
-
-// Categorias do grafico conforme o periodo: dias (14 ou 30) ou os 12 meses de um ano
-function montarPeriodo(periodo) {
-  if (periodo === "7" || periodo === "30") {
-    const n = Number(periodo);
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    const cats = Array.from({ length: n }, (_, i) => {
-      const d = new Date(hoje);
-      d.setDate(d.getDate() - (n - 1 - i));
-      return {
-        rotulo: String(d.getDate()),
-        grupo: `${MESES[d.getMonth()]}/${d.getFullYear()}`,
-        dica: `${dd(d.getDate())}/${dd(d.getMonth() + 1)}/${d.getFullYear()} (${SEMANA[d.getDay()]})`,
-        valores: {},
-        ini: d,
-      };
-    });
-    const indice = (dt) => {
-      const d = new Date(dt);
-      d.setHours(0, 0, 0, 0);
-      const i = Math.round((d - cats[0].ini) / 864e5);
-      return i >= 0 && i < n ? i : -1;
-    };
-    return { cats, indice, titulo: "por dia" };
-  }
-  const ano = Number(periodo);
-  const cats = MESES.map((m, i) => ({
-    rotulo: m,
-    dica: `${m}/${ano}`,
-    valores: {},
-  }));
-  const indice = (dt) => (dt.getFullYear() === ano ? dt.getMonth() : -1);
-  return { cats, indice, titulo: "por mês" };
-}
-
-export default function VisaoGeral({ itens, onAbrir }) {
-  const anos = [...new Set(itens.map((i) => dataVista(i).getFullYear()))].sort((a, b) => b - a);
-  const [periodo, setPeriodo] = useState("7");
+// itens ja chegam filtrados pelo periodo escolhido no topo da Visao geral
+export default function VisaoGeral({ itens, periodo, onAbrir }) {
 
   // --- vagas encontradas no periodo ---
   const { cats, indice, titulo } = montarPeriodo(periodo);
@@ -69,7 +27,6 @@ export default function VisaoGeral({ itens, onAbrir }) {
 
   // --- rosca: os mesmos dados do grafico "Vagas encontradas" (mesmo periodo), somados por recomendacao ---
   const fatias = SERIES_REC.map((s) => ({ ...s, valor: cats.reduce((t, c) => t + (c.valores[s.k] || 0), 0) }));
-  const nomePeriodo = { "7": "últimos 7 dias", "30": "últimos 30 dias" }[periodo] || periodo;
 
   // --- melhores para avaliar ---
   const melhores = itens
@@ -89,16 +46,7 @@ export default function VisaoGeral({ itens, onAbrir }) {
   return (
     <div className="grid">
       <section className="panel w8">
-        <div className="phead">
-          <h3>Vagas encontradas {titulo}</h3>
-          <div className="pctl">
-            <select aria-label="Período" value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
-              <option value="7">Últimos 7 dias</option>
-              <option value="30">Últimos 30 dias</option>
-              {anos.map((a) => <option key={a} value={String(a)}>{a}</option>)}
-            </select>
-          </div>
-        </div>
+        <h3>Vagas encontradas {titulo}</h3>
         <Legenda series={series} />
         <Colunas categorias={cats} series={series} />
         <details className="tabela">
@@ -145,7 +93,7 @@ export default function VisaoGeral({ itens, onAbrir }) {
 
       <section className="panel">
         <h3>Vagas por recomendação da IA</h3>
-        <Rosca fatias={fatias} rotuloTotal={`vagas · ${nomePeriodo}`} />
+        <Rosca fatias={fatias} rotuloTotal={`vagas · ${nomePeriodo(periodo)}`} />
       </section>
 
       <section className="panel">

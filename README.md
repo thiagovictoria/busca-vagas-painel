@@ -20,10 +20,11 @@ busca-vagas-painel/
     ├── App.jsx                    login, carga dos dados, abas, filtros, lista
     ├── config.js                  conexão Supabase, situações, critérios
     ├── format.js                  datas, salário, cores da nota
+    ├── periodo.js                 período da Visão geral (7/30 dias ou ano)
     ├── styles.css                 visual
     └── components/
         ├── Login.jsx              tela de entrada
-        ├── Resumo.jsx             os 3 números do topo
+        ├── Resumo.jsx             os 4 números do topo
         ├── VisaoGeral.jsx         aba de gráficos (vagas por dia/mês, notas, rosca por recomendação, modelo, localidades)
         ├── graficos.jsx           colunas, barras, rosca e anel de nota (SVG/HTML, sem biblioteca)
         ├── VagaLinha.jsx          uma vaga da lista + botões
