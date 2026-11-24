@@ -11,19 +11,28 @@ function Arte() {
     [30, 118, 1.8], [62, -104, 2.2], [98, 64, 1.6], [120, -30, 2.4], [132, 18, 1.4], [84, -70, 1.8],
     [-58, 30, 1.4], [44, 40, 1.6], [-30, -58, 1.8], [52, -36, 1.4], [-84, -62, 1.6], [8, 76, 1.4],
   ];
+  // movimento: a agua da bateia gira devagar (aneis tracejados e graos de areia em sentidos opostos),
+  // as pepitas pequenas rodam junto e a pepita do centro brilha. Sem movimento se o sistema pedir (reduzir movimento).
+  const perto = graos.filter(([x, y]) => Math.hypot(x, y) < 90);
+  const longe = graos.filter(([x, y]) => Math.hypot(x, y) >= 90);
   return (
     <svg viewBox="-170 -170 340 340" aria-hidden="true" className="bateia">
       <circle r="160" fill="#123a30" />
       {aneis.map((r, i) => (
         <circle key={r} r={r} fill="none" stroke="#f3ecdc" strokeOpacity={0.07 + i * 0.03} strokeWidth="1.5"
-          strokeDasharray={i % 2 ? "4 10" : undefined} />
+          strokeDasharray={i % 2 ? "4 10" : undefined} className={i % 2 ? (i === 1 ? "gira" : "gira-volta") : undefined} />
       ))}
-      {graos.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill="#c9bfa8" opacity=".55" />)}
-      <circle r="34" fill="#e0ac3f" opacity=".12" />
-      <Pepita k={3.1} giro={-10} />
-      <Pepita x={-92} y={-18} k={0.9} giro={20} />
-      <Pepita x={74} y={88} k={0.7} giro={-30} />
-      <path d="M30-46c.7 4 2.3 5.6 6.3 6.3-4 .7-5.6 2.3-6.3 6.3-.7-4-2.3-5.6-6.3-6.3 4-.7 5.6-2.3 6.3-6.3z" fill="#fff4d6" />
+      <g className="gira-lento">
+        {longe.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill="#c9bfa8" opacity=".55" />)}
+        <Pepita x={74} y={88} k={0.7} giro={-30} />
+      </g>
+      <g className="gira-volta">
+        {perto.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill="#c9bfa8" opacity=".55" />)}
+        <Pepita x={-92} y={-18} k={0.9} giro={20} />
+      </g>
+      <circle r="34" fill="#e0ac3f" className="aura" />
+      <g className="flutua"><Pepita k={3.1} giro={-10} /></g>
+      <path d="M30-46c.7 4 2.3 5.6 6.3 6.3-4 .7-5.6 2.3-6.3 6.3-.7-4-2.3-5.6-6.3-6.3 4-.7 5.6-2.3 6.3-6.3z" fill="#fff4d6" className="brilho" />
     </svg>
   );
 }
