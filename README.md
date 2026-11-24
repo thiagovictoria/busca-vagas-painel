@@ -32,6 +32,10 @@ busca-vagas-painel/
         └── Aviso.jsx              aviso "salvo / desfazer"
 ```
 
+## Visão geral: filtro cruzado
+
+Clicar numa coluna (dia/mês ou faixa de nota), numa fatia da rosca ou numa barra (modelo, localidade) filtra todos os outros gráficos e os números do topo. Os filtros ativos aparecem no topo; clique de novo ou no ✕ para tirar.
+
 ## Design system
 
 Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):

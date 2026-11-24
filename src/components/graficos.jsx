@@ -45,7 +45,7 @@ export function Legenda({ series }) {
  * categorias: [{rotulo, dica, valores: {serie: n}}]; series: [{k, nome, cor}]
  */
 // altura omitida: o grafico ocupa o espaco que sobrar no cartao (classe .fig.auto)
-export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
+export function Colunas({ categorias, series, altura, unidade = "vagas", selecionado = null, onSelecionar }) {
   const [ref, W, Hmedida] = useTamanho();
   const [foco, setFoco] = useState(null);
   const temGrupo = categorias.some((c) => c.grupo);
@@ -69,7 +69,7 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
             let acum = 0;
             const vis = series.filter((s) => (c.valores[s.k] || 0) > 0);
             return (
-              <g key={i} opacity={foco === null || foco === i ? 1 : 0.45}>
+              <g key={i} opacity={foco !== null ? (foco === i ? 1 : 0.45) : selecionado === null || selecionado === i ? 1 : 0.3}>
                 {vis.map((s, j) => {
                   const v = c.valores[s.k];
                   const y0 = y(acum), y1 = y(acum + v);
@@ -89,7 +89,8 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
                   </g>
                 )}
                 <rect x={esq + banda * i} y={0} width={banda} height={H} fill="transparent"
-                  onMouseEnter={() => setFoco(i)} onTouchStart={() => setFoco(i)} />
+                  onMouseEnter={() => setFoco(i)} onTouchStart={() => setFoco(i)}
+                  onClick={() => onSelecionar && onSelecionar(i)} style={{ cursor: onSelecionar ? "pointer" : "default" }} />
               </g>
             );
           })}
@@ -111,17 +112,22 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
 }
 
 /** Barras horizontais simples (HTML). itens: [{rotulo, valor, dica?}] */
-export function Barras({ itens, cor = "var(--primary)", preencher = false }) {
+export function Barras({ itens, cor = "var(--primary)", preencher = false, selecionado = null, onSelecionar }) {
   const max = Math.max(1, ...itens.map((i) => i.valor));
   return (
     <div className={"hbars" + (preencher ? " fill" : "")}>
-      {itens.map((i) => (
-        <div className="hb" key={i.rotulo} title={i.dica || `${i.rotulo}: ${i.valor}`}>
-          <span>{i.rotulo}</span>
-          <div className="tr"><i style={{ width: (i.valor / max) * 100 + "%", background: cor, opacity: i.valor ? 1 : 0.25 }} /></div>
-          <b>{i.valor}</b>
-        </div>
-      ))}
+      {itens.map((i) => {
+        const apagada = selecionado !== null && selecionado !== i.rotulo;
+        return (
+          <button type="button" className={"hb" + (selecionado === i.rotulo ? " on" : "")} key={i.rotulo}
+            title={i.dica || `${i.rotulo}: ${i.valor}`} disabled={!onSelecionar}
+            style={{ opacity: apagada ? 0.4 : 1 }} onClick={() => onSelecionar && onSelecionar(i.rotulo)}>
+            <span>{i.rotulo}</span>
+            <div className="tr"><i style={{ width: (i.valor / max) * 100 + "%", background: cor, opacity: i.valor ? 1 : 0.25 }} /></div>
+            <b>{i.valor}</b>
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -146,14 +152,15 @@ export function Anel({ nota, cor, grande = false }) {
  * Rosca interativa. fatias: [{k, nome, cor, valor}]
  * Passe o mouse (ou toque) numa fatia ou na legenda: o centro mostra a quantidade e o %.
  */
-export function Rosca({ fatias, rotuloTotal = "vagas" }) {
+export function Rosca({ fatias, rotuloTotal = "vagas", selecionado = null, onSelecionar }) {
   const [foco, setFoco] = useState(null);
   const total = fatias.reduce((t, f) => t + f.valor, 0);
   const R = 72, C = 2 * Math.PI * R, GAP = 2.5;
   let acum = 0;
   const visiveis = fatias.filter((f) => f.valor > 0);
   const pct = (v) => (total ? Math.round((v / total) * 100) : 0);
-  const atual = foco && fatias.find((f) => f.k === foco);
+  const marcado = foco || selecionado;
+  const atual = marcado && fatias.find((f) => f.k === marcado);
   return (
     <div className="rosca" onMouseLeave={() => setFoco(null)}>
       <svg viewBox="0 0 200 200" role="img" aria-label={`Rosca com ${total} ${rotuloTotal}`}>
@@ -162,15 +169,15 @@ export function Rosca({ fatias, rotuloTotal = "vagas" }) {
           const len = (f.valor / total) * C;
           const ini = acum;
           acum += len;
-          const ativo = foco === f.k;
+          const ativo = marcado === f.k;
           return (
             <circle key={f.k} cx="100" cy="100" r={R} fill="none" stroke={f.cor}
               strokeWidth={ativo ? 32 : 26}
               strokeDasharray={`${Math.max(0, len - (visiveis.length > 1 ? GAP : 0))} ${C}`}
               strokeDashoffset={-ini} transform="rotate(-90 100 100)"
-              opacity={foco && !ativo ? 0.35 : 1}
+              opacity={marcado && !ativo ? 0.3 : 1}
               style={{ transition: "stroke-width .15s, opacity .15s", cursor: "pointer" }}
-              onMouseEnter={() => setFoco(f.k)} onTouchStart={() => setFoco(f.k)} />
+              onMouseEnter={() => setFoco(f.k)} onClick={() => onSelecionar && onSelecionar(f.k)} />
           );
         })}
         <text x="100" y="98" textAnchor="middle" className="rosca-n">{atual ? atual.valor : total}</text>
@@ -180,7 +187,8 @@ export function Rosca({ fatias, rotuloTotal = "vagas" }) {
       </svg>
       <ul className="rosca-leg">
         {fatias.map((f) => (
-          <li key={f.k} className={foco === f.k ? "on" : ""} onMouseEnter={() => setFoco(f.k)} onClick={() => setFoco(foco === f.k ? null : f.k)}>
+          <li key={f.k} className={(marcado === f.k ? "on" : "") + (selecionado && selecionado !== f.k ? " off" : "")}
+            onMouseEnter={() => setFoco(f.k)} onClick={() => onSelecionar && onSelecionar(f.k)}>
             <i style={{ background: f.cor }} />
             <span>{f.nome}</span>
             <b>{f.valor}</b>

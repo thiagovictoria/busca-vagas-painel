@@ -193,7 +193,7 @@ export default function App() {
           </div>
         </div>
       </header>
-      <Resumo itens={aba === "visao" ? itensPeriodo : itens} />
+      {aba !== "visao" && <Resumo itens={itens} />}
 
       <main className="wrap" onClick={() => menu && setMenu(false)}>
         {aba === "visao" ? (
