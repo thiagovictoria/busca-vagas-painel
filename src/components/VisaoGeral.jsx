@@ -67,10 +67,9 @@ export default function VisaoGeral({ itens, onAbrir }) {
   itens.map((i) => i.vaga.nota_match).filter((n) => n != null)
     .forEach((n) => faixas[Math.min(9, Math.floor(n / 10))].valores.n++);
 
-  // --- rosca: so as vagas "para avaliar" (mesmo total do numero do topo), pelas opcoes do filtro de recomendacao ---
-  const paraAvaliar = itens.filter(SITUACOES.avaliar.f);
-  const fatias = SERIES_REC.filter((s) => s.k !== "eliminado")
-    .map((s) => ({ ...s, valor: paraAvaliar.filter((i) => (i.vaga.match_recomendacao || "pular") === s.k).length }));
+  // --- rosca: os mesmos dados do grafico "Vagas encontradas" (mesmo periodo), somados por recomendacao ---
+  const fatias = SERIES_REC.map((s) => ({ ...s, valor: cats.reduce((t, c) => t + (c.valores[s.k] || 0), 0) }));
+  const nomePeriodo = { "7": "últimos 7 dias", "30": "últimos 30 dias" }[periodo] || periodo;
 
   // --- melhores para avaliar ---
   const melhores = itens
@@ -145,8 +144,8 @@ export default function VisaoGeral({ itens, onAbrir }) {
       </section>
 
       <section className="panel">
-        <h3>Para avaliar, por recomendação</h3>
-        <Rosca fatias={fatias} rotuloTotal="para avaliar" />
+        <h3>Vagas por recomendação da IA</h3>
+        <Rosca fatias={fatias} rotuloTotal={`vagas · ${nomePeriodo}`} />
       </section>
 
       <section className="panel">
