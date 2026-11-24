@@ -151,26 +151,28 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
             ) : <p className="foot">Nada esperando avaliação com esses filtros.</p>}
           </section>
 
-          <section className="panel l2 w3">
+          <section className="panel l2">
             <h3>Distribuição das notas</h3>
             <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]}
               selecionado={sel.nota} onSelecionar={alternar("nota")} />
           </section>
 
-          <section className="panel l2 w3">
+          <section className="panel l2">
             <h3>Vagas encontradas</h3>
             <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
           </section>
 
-          <section className="panel l2 w3">
-            <h3>Modelo de trabalho</h3>
-            <Barras itens={modelos} preencher selecionado={sel.modelo} onSelecionar={alternar("modelo")} />
-          </section>
-
-          <section className="panel l2 w3">
-            <h3>Localidades</h3>
-            <Barras itens={localidades} preencher selecionado={sel.local} onSelecionar={alternar("local")} />
-          </section>
+          {/* dois cartoes, um abaixo do outro, na mesma coluna */}
+          <div className="pilha">
+            <section className="panel">
+              <h3>Modelo de trabalho</h3>
+              <Barras itens={modelos} preencher selecionado={sel.modelo} onSelecionar={alternar("modelo")} />
+            </section>
+            <section className="panel">
+              <h3>Localidades</h3>
+              <Barras itens={localidades} preencher selecionado={sel.local} onSelecionar={alternar("local")} />
+            </section>
+          </div>
         </div>
       </div>
     </>
