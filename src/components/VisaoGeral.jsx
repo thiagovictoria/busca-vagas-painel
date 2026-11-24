@@ -117,13 +117,8 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSe
           </section>
 
           <section className="panel w3 l1">
-            <h3>Vagas encontradas</h3>
-            <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
-          </section>
-
-          <section className="panel w6 l2">
             <h3>Melhores para avaliar</h3>
-            <p className="sub">As de maior nota esperando sua decisão.</p>
+            <p className="sub">Maiores notas sem decisão.</p>
             {melhores.length ? (
               <ul className="top5">
                 {melhores.map((it) => (
@@ -139,10 +134,15 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSe
             ) : <p className="foot">Nada esperando avaliação com esses filtros.</p>}
           </section>
 
-          <section className="panel w3 l2">
+          <section className="panel w6 l2">
             <h3>Distribuição das notas</h3>
             <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]}
               selecionado={sel.nota} onSelecionar={alternar("nota")} />
+          </section>
+
+          <section className="panel w3 l2">
+            <h3>Vagas encontradas</h3>
+            <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
           </section>
 
           {/* dois cartoes, um abaixo do outro, na mesma coluna */}
