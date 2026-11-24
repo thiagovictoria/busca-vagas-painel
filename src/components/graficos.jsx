@@ -58,17 +58,11 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
   const larg = Math.max(4, Math.min(24, banda * 0.62));
   const y = (v) => topo + ih - (v / max) * ih;
   const passoRotulo = Math.max(1, Math.ceil(36 / Math.max(banda, 1)));
-  const ticks = [0, max / 2, max];
 
   return (
     <div className={"fig" + (altura ? "" : " auto")} ref={ref} style={altura ? { height: altura } : undefined} onMouseLeave={() => setFoco(null)}>
       {W > 0 && (
         <svg role="img" aria-label={`Gráfico de colunas com ${n} categorias`}>
-          {ticks.map((t) => (
-            <g key={t}>
-              <line x1={esq} x2={W} y1={y(t)} y2={y(t)} stroke="var(--grid)" strokeWidth="1" />
-            </g>
-          ))}
           {categorias.map((c, i) => {
             const cx = esq + banda * i + banda / 2;
             const x = cx - larg / 2;
