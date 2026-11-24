@@ -71,7 +71,7 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
             <div className="co"><Recomendacao valor={v.match_recomendacao} />{v.empresa}</div>
             <div className="pills">
               <span className="pill">{fLocal(v)}</span>
-              {v.modalidade && <span className="pill">{fModalidade(v.modalidade)}</span>}
+              {v.modalidade && fModalidade(v.modalidade) !== fLocal(v) && <span className="pill">{fModalidade(v.modalidade)}</span>}
               <span className="pill">{fSal(v)}</span>
             </div>
             <p style={{ margin: "10px 0 0" }}>

@@ -1,5 +1,5 @@
-import { COR_REC, SERIES_REC, ABAS, FIM } from "../config.js";
-import { diaCurto, fModalidade } from "../format.js";
+import { COR_REC, SERIES_REC, SITUACOES } from "../config.js";
+import { diaCurto, fLocal, fModalidade } from "../format.js";
 import { Anel, Barras, Colunas, Legenda } from "./graficos.jsx";
 
 const DIAS = 14;
@@ -52,7 +52,7 @@ export default function VisaoGeral({ itens, onAbrir }) {
 
   // --- melhores para avaliar ---
   const melhores = itens
-    .filter((i) => ABAS.avaliar(i) && i.vaga.match_recomendacao !== "eliminado")
+    .filter(SITUACOES.avaliar.f)
     .sort((a, b) => (b.vaga.nota_match ?? -1) - (a.vaga.nota_match ?? -1))
     .slice(0, 5);
 
@@ -63,8 +63,8 @@ export default function VisaoGeral({ itens, onAbrir }) {
     return [...m].map(([rotulo, valor]) => ({ rotulo, valor })).sort((a, b) => b.valor - a.valor);
   };
   const modelos = conta((v) => fModalidade(v.modalidade) || "Não informado");
-  const cidades = conta((v) => v.cidade || (fModalidade(v.modalidade) === "Remoto" ? "Remoto" : "Não informada")).slice(0, 6);
-  const descartadas = itens.filter((i) => FIM.includes(i.status)).length;
+  const localidades = conta(fLocal).slice(0, 6);
+  const descartadas = itens.filter(SITUACOES.descartadas.f).length;
 
   return (
     <div className="grid">
@@ -137,9 +137,9 @@ export default function VisaoGeral({ itens, onAbrir }) {
       </section>
 
       <section className="panel third">
-        <h3>Cidades</h3>
-        <p className="sub">Onde estão as vagas.</p>
-        <Barras itens={cidades} />
+        <h3>Localidades</h3>
+        <p className="sub">Onde estão as vagas encontradas.</p>
+        <Barras itens={localidades} />
       </section>
     </div>
   );

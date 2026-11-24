@@ -192,3 +192,13 @@ dialog::backdrop{background:rgba(0,20,15,.45)}
   .who .live span{display:none}
   .panel{padding:18px 16px}
 }
+
+/* situacao + filtros suspensos */
+.bar{flex-direction:column;align-items:stretch}
+.filtros{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.filtros input[type=search]{flex:1 1 220px}
+.filtros select{flex:0 1 auto;max-width:100%}
+.chip .n{font-weight:600;font-size:12px;padding:0 7px;border-radius:99px;background:var(--soft);color:var(--mute)}
+.chip[aria-pressed=true] .n{background:rgba(255,255,255,.18);color:inherit}
+.num small+small{margin-top:0}
+@media(max-width:760px){.filtros select{flex:1 1 calc(50% - 5px)}}

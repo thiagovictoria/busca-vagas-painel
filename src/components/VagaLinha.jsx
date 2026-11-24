@@ -1,4 +1,4 @@
-import { COR_REC, PIPE, REC, STATUS, encerrada } from "../config.js";
+import { COR_REC, GRUPOS_CAND, REC, STATUS, encerrada } from "../config.js";
 import { fData, fLocal, fModalidade, fRel, fSal } from "../format.js";
 import { Anel } from "./graficos.jsx";
 
@@ -12,6 +12,8 @@ export function Recomendacao({ valor }) {
 export default function VagaLinha({ it, onMudar, onAbrir }) {
   const v = it.vaga;
   const fechada = encerrada(it);
+  const local = fLocal(v);
+  const modelo = fModalidade(v.modalidade);
 
   let acoes = null;
   if (it.status === "nova" && !fechada)
@@ -28,7 +30,7 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
         <button className="btn sm warn" onClick={() => onMudar(it, "descartada")}>Descartar</button>
       </>
     );
-  else if (PIPE.includes(it.status))
+  else if (GRUPOS_CAND.includes(it.status))
     acoes = (
       <select aria-label="Situação" value={it.status} onChange={(e) => onMudar(it, e.target.value)}>
         {Object.keys(STATUS).filter((s) => s !== "nova").map((s) => (
@@ -36,7 +38,7 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
         ))}
       </select>
     );
-  else if (it.status !== "nova")
+  else if (it.status === "descartada")
     acoes = <button className="btn sm" onClick={() => onMudar(it, "nova")}>Voltar para avaliação</button>;
 
   return (
@@ -46,8 +48,8 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
         <button className="ttl" type="button" onClick={() => onAbrir(it)}>{v.titulo}</button>
         <div className="co"><Recomendacao valor={v.match_recomendacao} /><span>{v.empresa}</span></div>
         <div className="pills">
-          <span className="pill">{fLocal(v)}</span>
-          {v.modalidade && <span className="pill">{fModalidade(v.modalidade)}</span>}
+          <span className="pill">{local}</span>
+          {modelo && modelo !== local && <span className="pill">{modelo}</span>}
           <span className="pill">{fSal(v)}</span>
           <span className="pill">Publicada {fRel(v.publicado_em)}</span>
           {fechada && <span className="pill alert">Encerrada {fData(v.encerrada_detectada_em)}</span>}

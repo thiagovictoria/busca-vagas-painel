@@ -25,16 +25,17 @@ export function fSal(v) {
       : brl(v.salario_min) + " a " + brl(v.salario_max).replace("R$ ", "");
   if (v.salario_max) return "até " + brl(v.salario_max);
   if (v.salario_min) return "a partir de " + brl(v.salario_min);
-  return v.salario_label || "Salário não informado";
+  // a Gupy as vezes manda uma frase longa ("Esta vaga nao possui faixa salarial informada.")
+  return v.salario_label && /\d/.test(v.salario_label) ? v.salario_label : "Salário não informado";
 }
 
 
 const MODALIDADE = { remote: "Remoto", hybrid: "Híbrido", "on-site": "Presencial", onsite: "Presencial", presencial: "Presencial" };
 export const fModalidade = (m) => (m ? MODALIDADE[String(m).toLowerCase()] || m : "");
 
-// "Rio de Janeiro / RJ"; vaga remota sem cidade vira "Remoto"
+// Localidade: "Rio de Janeiro / RJ"; vaga remota sem cidade vira "Remoto"
 export const fLocal = (v) =>
-  [v.cidade, v.estado].filter(Boolean).join(" / ") || (fModalidade(v.modalidade) === "Remoto" ? "Qualquer lugar" : "Local não informado");
+  [v.cidade, v.estado].filter(Boolean).join(" / ") || (fModalidade(v.modalidade) === "Remoto" ? "Remoto" : "Não informada");
 
 export const diaCurto = (d) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 

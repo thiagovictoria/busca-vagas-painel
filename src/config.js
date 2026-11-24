@@ -22,6 +22,7 @@ export const STATUS = {
 export const PIPE = ["aprovada", "inscrita", "em_analise", "case", "entrevista", "proposta", "contratado"];
 export const EM_PROCESSO = ["inscrita", "em_analise", "case", "entrevista", "proposta"];
 export const FIM = ["descartada", "reprovado", "sem_retorno"];
+export const GRUPOS_CAND = [...PIPE, "reprovado", "sem_retorno"];
 export const REC = { candidatar: "Candidatar", avaliar: "Avaliar", pular: "Pular", eliminado: "Eliminado" };
 // cores validadas para daltonismo (claro e escuro), definidas em styles.css
 export const COR_REC = { candidatar: "var(--s1)", avaliar: "var(--s2)", pular: "var(--s3)", eliminado: "var(--s4)" };
@@ -43,8 +44,16 @@ export const LISTA_COLS =
   "match_perfil_versao,match_modelo,match_avaliado_em)";
 
 export const encerrada = (it) => !!it.vaga.encerrada_na_plataforma;
+const eliminada = (it) => it.vaga.match_recomendacao === "eliminado";
+
+// Situacao de cada vaga que ainda nao virou candidatura (os grupos nao se sobrepoem)
+export const SITUACOES = {
+  avaliar: { nome: "Para avaliar", f: (it) => it.status === "nova" && !encerrada(it) && !eliminada(it) },
+  eliminadas: { nome: "Eliminadas", f: (it) => it.status === "nova" && !encerrada(it) && eliminada(it) },
+  encerradas: { nome: "Encerradas", f: (it) => it.status === "nova" && encerrada(it) },
+  descartadas: { nome: "Descartadas", f: (it) => it.status === "descartada" },
+};
 export const ABAS = {
-  avaliar: (it) => it.status === "nova" && !encerrada(it),
-  candidaturas: (it) => PIPE.includes(it.status),
-  arquivo: (it) => FIM.includes(it.status) || (it.status === "nova" && encerrada(it)),
+  vagas: (it) => it.status === "nova" || it.status === "descartada",
+  candidaturas: (it) => GRUPOS_CAND.includes(it.status),
 };

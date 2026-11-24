@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ABAS, CAND_COLS, LISTA_COLS, PIPE, REC, STATUS, sb } from "./config.js";
-import { guardar, ms } from "./format.js";
+import { ABAS, CAND_COLS, GRUPOS_CAND, LISTA_COLS, REC, SITUACOES, STATUS, sb } from "./config.js";
+import { fLocal, fModalidade, guardar, ms } from "./format.js";
 import Login from "./components/Login.jsx";
 import Resumo from "./components/Resumo.jsx";
 import VagaLinha from "./components/VagaLinha.jsx";
@@ -13,7 +13,8 @@ const ORDENS = {
   data: (x, y) => ms(y.vaga.publicado_em) - ms(x.vaga.publicado_em),
   prazo: (x, y) => (x.vaga.prazo_inscricao || "9999").localeCompare(y.vaga.prazo_inscricao || "9999"),
 };
-const ROTULO_ABAS = [["visao", "Visão geral"], ["avaliar", "Para avaliar"], ["candidaturas", "Candidaturas"], ["arquivo", "Arquivo"]];
+const ROTULO_ABAS = [["visao", "Visão geral"], ["vagas", "Vagas"], ["candidaturas", "Candidaturas"]];
+const unicos = (lista) => [...new Set(lista)].sort((a, b) => a.localeCompare(b, "pt-BR"));
 const RECARREGAR_MIN = 5; // busca dados novos sozinho a cada 5 minutos
 
 function Marca() {
@@ -33,12 +34,14 @@ export default function App() {
   const [ultima, setUltima] = useState(null);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const [aba, setAba] = useState(guardar.get("tab", "visao"));
+  const [aba, setAba] = useState(() => { const t = guardar.get("tab", "visao"); return ROTULO_ABAS.some(([k]) => k === t) ? t : "vagas"; });
+  const [sit, setSit] = useState("avaliar");
+  const [loc, setLoc] = useState("todas");
+  const [mod, setMod] = useState("todos");
   const [atualizadoEm, setAtualizadoEm] = useState(null);
   const [menu, setMenu] = useState(false);
   const [rec, setRec] = useState(guardar.get("rec", "todas"));
   const [ordem, setOrdem] = useState(guardar.get("ord", "nota"));
-  const [verElim, setVerElim] = useState(guardar.get("elim", "0") === "1");
   const [busca, setBusca] = useState("");
   const [aberta, setAberta] = useState(null);
   const [toast, setToast] = useState(null);
@@ -119,26 +122,29 @@ export default function App() {
   }
 
   // ---------- listas ----------
-  const paraAvaliarTodas = useMemo(() => itens.filter(ABAS.avaliar), [itens]);
-  const paraAvaliar = paraAvaliarTodas.filter((i) => i.vaga.match_recomendacao !== "eliminado");
-  const nEliminadas = paraAvaliarTodas.length - paraAvaliar.length;
+  const porSit = useMemo(() => {
+    const r = {};
+    for (const k in SITUACOES) r[k] = itens.filter(SITUACOES[k].f);
+    return r;
+  }, [itens]);
+  const paraAvaliar = porSit.avaliar || [];
   const contagem = {
     visao: null,
-    avaliar: paraAvaliar.length,
+    vagas: itens.filter(ABAS.vagas).length,
     candidaturas: itens.filter(ABAS.candidaturas).length,
-    arquivo: itens.filter(ABAS.arquivo).length,
   };
+  const localidades = useMemo(() => unicos(itens.map((i) => fLocal(i.vaga))), [itens]);
+  const modelos = useMemo(() => unicos(itens.map((i) => fModalidade(i.vaga.modalidade) || "Não informado")), [itens]);
 
   const visiveis = useMemo(() => {
     const q = busca.trim().toLowerCase();
-    let a = itens.filter(ABAS[aba] || ABAS.avaliar);
-    if (aba === "avaliar") {
-      if (!verElim) a = a.filter((i) => i.vaga.match_recomendacao !== "eliminado");
-      if (rec !== "todas") a = a.filter((i) => i.vaga.match_recomendacao === rec);
-    }
+    let a = aba === "vagas" ? porSit[sit] || [] : itens.filter(ABAS.candidaturas);
+    if (aba === "vagas" && rec !== "todas") a = a.filter((i) => i.vaga.match_recomendacao === rec);
+    if (loc !== "todas") a = a.filter((i) => fLocal(i.vaga) === loc);
+    if (mod !== "todos") a = a.filter((i) => (fModalidade(i.vaga.modalidade) || "Não informado") === mod);
     if (q) a = a.filter((i) => `${i.vaga.titulo || ""} ${i.vaga.empresa || ""}`.toLowerCase().includes(q));
     return [...a].sort(ORDENS[ordem] || ORDENS.nota);
-  }, [itens, aba, rec, verElim, busca, ordem]);
+  }, [itens, porSit, aba, sit, rec, loc, mod, busca, ordem]);
 
   const escolher = (setter, chave) => (valor) => { setter(valor); guardar.set(chave, valor); };
   const escolherAba = escolher(setAba, "tab");
@@ -150,11 +156,12 @@ export default function App() {
   if (!sessao) return <Login />;
 
   const linha = (it) => <VagaLinha key={it.chave_unica} it={it} onMudar={mudar} onAbrir={setAberta} />;
-  const vazio = busca.trim()
-    ? "Nada encontrado para essa busca."
-    : aba === "avaliar" ? "Nenhuma vaga esperando avaliação."
-    : aba === "candidaturas" ? "Nenhuma candidatura ainda. Marque vagas como “Quero me inscrever” na aba Para avaliar."
-    : "Nada arquivado.";
+  const filtrando = busca.trim() || rec !== "todas" || loc !== "todas" || mod !== "todos";
+  const vazio = filtrando
+    ? "Nada encontrado com esses filtros."
+    : aba === "candidaturas" ? "Nenhuma candidatura ainda. Marque vagas como “Quero me inscrever” na aba Vagas."
+    : { avaliar: "Nenhuma vaga esperando avaliação.", eliminadas: "Nenhuma vaga eliminada.", encerradas: "Nenhuma vaga encerrada antes de você decidir.", descartadas: "Nenhuma vaga descartada." }[sit];
+  const limpar = () => { setBusca(""); escolherRec("todas"); setLoc("todas"); setMod("todos"); };
   const itemAberto = aberta && itens.find((x) => x.chave_unica === aberta.chave_unica);
 
   return (
@@ -180,7 +187,7 @@ export default function App() {
               </div>
             </div>
           </div>
-          <Resumo itens={itens} ultima={ultima} paraAvaliar={paraAvaliar} />
+          <Resumo itens={itens} ultima={ultima} porSit={porSit} />
           <nav className="tabs" role="tablist">
             {ROTULO_ABAS.map(([k, rotulo]) => (
               <button key={k} className="tab" role="tab" type="button" aria-selected={aba === k} onClick={() => escolherAba(k)}>
@@ -197,27 +204,38 @@ export default function App() {
           : <VisaoGeral itens={itens} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
-          <input type="search" placeholder="Buscar por cargo ou empresa" aria-label="Buscar" value={busca} onChange={(e) => setBusca(e.target.value)} />
-          {aba === "avaliar" && (
-            <div className="chips">
-              {["todas", "candidatar", "avaliar", "pular"].map((r) => (
-                <button key={r} className="chip" type="button" aria-pressed={rec === r} onClick={() => escolherRec(r)}>
-                  {r === "todas" ? "Todas" : REC[r]}
+          {aba === "vagas" && (
+            <div className="chips" role="group" aria-label="Situação">
+              {Object.entries(SITUACOES).map(([k, x]) => (
+                <button key={k} className="chip" type="button" aria-pressed={sit === k} onClick={() => setSit(k)}>
+                  {x.nome}<b className="n">{(porSit[k] || []).length}</b>
                 </button>
               ))}
             </div>
           )}
-          <select aria-label="Ordenar" value={ordem} onChange={(e) => escolherOrdem(e.target.value)}>
-            <option value="nota">Maior nota</option>
-            <option value="data">Mais recentes</option>
-            <option value="prazo">Prazo mais próximo</option>
-          </select>
-          {aba === "avaliar" && (
-            <label className="chk">
-              <input type="checkbox" checked={verElim} onChange={(e) => { setVerElim(e.target.checked); guardar.set("elim", e.target.checked ? "1" : "0"); }} />
-              Mostrar eliminadas ({nEliminadas})
-            </label>
-          )}
+          <div className="filtros">
+            <input type="search" placeholder="Buscar por cargo ou empresa" aria-label="Buscar" value={busca} onChange={(e) => setBusca(e.target.value)} />
+            {aba === "vagas" && (
+              <select aria-label="Recomendação" value={rec} onChange={(e) => escolherRec(e.target.value)}>
+                <option value="todas">Recomendação</option>
+                {Object.entries(REC).map(([k, n]) => <option key={k} value={k}>{n}</option>)}
+              </select>
+            )}
+            <select aria-label="Localidade" value={loc} onChange={(e) => setLoc(e.target.value)}>
+              <option value="todas">Localidade</option>
+              {localidades.map((l) => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <select aria-label="Modelo de trabalho" value={mod} onChange={(e) => setMod(e.target.value)}>
+              <option value="todos">Modelo</option>
+              {modelos.map((m) => <option key={m} value={m}>{m}</option>)}
+            </select>
+            <select aria-label="Ordenar" value={ordem} onChange={(e) => escolherOrdem(e.target.value)}>
+              <option value="nota">Maior nota</option>
+              <option value="data">Mais recentes</option>
+              <option value="prazo">Prazo mais próximo</option>
+            </select>
+            {filtrando && <button className="btn sm ghost" type="button" onClick={limpar}>Limpar filtros</button>}
+          </div>
         </div>
 
         <div className="lista" aria-live="polite">
@@ -225,7 +243,7 @@ export default function App() {
           {!erro && carregando && !itens.length && <p className="empty">Carregando…</p>}
           {!erro && !carregando && !visiveis.length && <p className="empty">{vazio}</p>}
           {aba === "candidaturas"
-            ? PIPE.map((s) => {
+            ? GRUPOS_CAND.map((s) => {
                 const grupo = visiveis.filter((i) => i.status === s);
                 if (!grupo.length) return null;
                 return (
