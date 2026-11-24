@@ -9,7 +9,7 @@ export const sb = createClient(SB_URL, SB_KEY);
 export const STATUS = {
   nova: "Nova",
   aprovada: "Quero me inscrever",
-  inscrita: "Inscrita",
+  inscrita: "Inscrito",
   em_analise: "Em análise",
   case: "Case",
   entrevista: "Entrevista",
@@ -23,6 +23,10 @@ export const PIPE = ["aprovada", "inscrita", "em_analise", "case", "entrevista",
 export const EM_PROCESSO = ["inscrita", "em_analise", "case", "entrevista", "proposta"];
 export const FIM = ["descartada", "reprovado", "sem_retorno"];
 export const GRUPOS_CAND = [...PIPE, "reprovado", "sem_retorno"];
+// "aprovada" (quero me inscrever) fica guardada para a fase de inscricao automatica; nao aparece nas escolhas
+export const ESCOLHAS_STATUS = Object.keys(STATUS).filter((s) => s !== "aprovada");
+// ate que etapa cada situacao chegou (reprovado e sem retorno: ao menos inscrito)
+export const ETAPA = { nova: 0, descartada: 0, aprovada: 1, inscrita: 2, reprovado: 2, sem_retorno: 2, em_analise: 3, case: 4, entrevista: 4, proposta: 5, contratado: 6 };
 export const REC = { candidatar: "Candidatar", avaliar: "Avaliar", pular: "Pular", eliminado: "Eliminado" };
 // cores validadas para daltonismo (claro e escuro), definidas em styles.css
 export const COR_REC = { candidatar: "var(--s1)", avaliar: "var(--s2)", pular: "var(--s3)", eliminado: "var(--s4)" };

@@ -1,42 +1,40 @@
-import { EM_PROCESSO } from "../config.js";
-import { fRel, ms } from "../format.js";
+import { ETAPA } from "../config.js";
 
-// Faixa verde: os quatro numeros do topo
-export default function Resumo({ itens, ultima, porSit }) {
-  const paraAvaliar = porSit.avaliar || [];
-  const n = (k) => (porSit[k] || []).length;
-  const fora = [[n("eliminadas"), "eliminada", "eliminadas"], [n("encerradas"), "encerrada", "encerradas"], [n("descartadas"), "descartada", "descartadas"]]
-    .filter(([q]) => q).map(([q, um, v]) => `${q} ${q === 1 ? um : v}`);
-  const emCandidatura = itens.length - paraAvaliar.length - n("eliminadas") - n("encerradas") - n("descartadas");
-  if (emCandidatura) fora.unshift(`${emCandidatura} em candidaturas`);
-  const recomendadas = paraAvaliar.filter((i) => i.vaga.match_recomendacao === "candidatar").length;
-  const ultimas24h = paraAvaliar.filter((i) => Date.now() - ms(i.vaga.primeiro_visto_em) < 864e5).length;
-  const paraInscrever = itens.filter((i) => i.status === "aprovada").length;
-  const processo = itens.filter((i) => EM_PROCESSO.includes(i.status));
-  const avancadas = processo.filter((i) => ["case", "entrevista", "proposta"].includes(i.status)).length;
-  const coleta = ultima
-    ? ultima.sucesso
-      ? "Última coleta " + fRel(ultima.terminado_em || ultima.ciclo)
-      : "Última coleta com falha"
-    : "Sem coletas";
+// Icones simples (traço), um por número
+const ICONES = {
+  lista: <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />,
+  estrela: <path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" />,
+  check: <path d="M4 12.5l5 5L20 6.5" />,
+  conversa: <path d="M4 5h16v11H9l-5 4z" />,
+};
 
-  const blocos = [
-    [paraAvaliar.length, "para avaliar", [`${recomendadas} recomendadas · ${ultimas24h} nas últimas 24 h`,
-      fora.length ? `${itens.length} encontradas, fora: ${fora.join(", ")}` : null]],
-    [paraInscrever, "para inscrever", "marcadas como “quero me inscrever”"],
-    [processo.length, "em processo", `${avancadas} em case, entrevista ou proposta`],
-    [ultima ? ultima.novas_aprovadas ?? 0 : "—", "novas na última coleta", coleta],
-  ];
-
+function Icone({ nome, cor }) {
   return (
-    <div className="nums">
-      {blocos.map(([n, rotulo, sub]) => (
-        <div className="num" key={rotulo}>
-          <b>{n}</b>
-          <span>{rotulo}</span>
-          {(Array.isArray(sub) ? sub : [sub]).filter(Boolean).map((t) => <small key={t}>{t}</small>)}
+    <div className="ic" style={{ background: `color-mix(in srgb, ${cor} 14%, transparent)`, color: cor }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        {ICONES[nome]}
+      </svg>
+    </div>
+  );
+}
+
+// Os 4 números do topo
+export default function Resumo({ itens, porSit }) {
+  const paraAvaliar = porSit.avaliar || [];
+  const blocos = [
+    ["lista", "var(--primary)", paraAvaliar.length, "Para avaliar"],
+    ["estrela", "var(--s1)", paraAvaliar.filter((i) => i.vaga.match_recomendacao === "candidatar").length, "Recomendadas pela IA"],
+    ["check", "var(--s3)", itens.filter((i) => (ETAPA[i.status] ?? 0) >= 2).length, "Inscrições feitas"],
+    ["conversa", "var(--s2)", itens.filter((i) => ["em_analise", "case", "entrevista", "proposta"].includes(i.status)).length, "Em processo seletivo"],
+  ];
+  return (
+    <section className="wrap kpis" aria-label="Resumo">
+      {blocos.map(([ic, cor, n, rotulo]) => (
+        <div className="kpi" key={rotulo}>
+          <Icone nome={ic} cor={cor} />
+          <div><b>{n}</b><span>{rotulo}</span></div>
         </div>
       ))}
-    </div>
+    </section>
   );
 }

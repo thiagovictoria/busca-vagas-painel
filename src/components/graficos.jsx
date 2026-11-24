@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 
 // Largura real do elemento (os graficos sao desenhados no tamanho em pixels de verdade)
-function useLargura() {
+function useTamanho() {
   const ref = useRef(null);
-  const [w, setW] = useState(0);
+  const [t, setT] = useState({ w: 0, h: 0 });
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const ro = new ResizeObserver(() => setW(el.clientWidth));
+    const medir = () => setT({ w: el.clientWidth, h: el.clientHeight });
+    const ro = new ResizeObserver(medir);
     ro.observe(el);
-    setW(el.clientWidth);
+    medir();
     return () => ro.disconnect();
   }, []);
-  return [ref, w];
+  return [ref, t.w, t.h];
 }
 
 function teto(n) {
@@ -43,10 +44,11 @@ export function Legenda({ series }) {
  * Colunas (empilhadas quando ha mais de uma serie).
  * categorias: [{rotulo, dica, valores: {serie: n}}]; series: [{k, nome, cor}]
  */
-export function Colunas({ categorias, series, altura = 240, unidade = "vagas" }) {
-  const [ref, W] = useLargura();
+// altura omitida: o grafico ocupa o espaco que sobrar no cartao (classe .fig.auto)
+export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
+  const [ref, W, Hmedida] = useTamanho();
   const [foco, setFoco] = useState(null);
-  const H = altura, esq = 30, base = 26, topo = 18;
+  const H = altura || Hmedida || 240, esq = 30, base = 26, topo = 18;
   const n = categorias.length;
   const totais = categorias.map((c) => series.reduce((s, x) => s + (c.valores[x.k] || 0), 0));
   const max = teto(Math.max(1, ...totais));
@@ -58,7 +60,7 @@ export function Colunas({ categorias, series, altura = 240, unidade = "vagas" })
   const ticks = [0, max / 2, max];
 
   return (
-    <div className="fig" ref={ref} style={{ height: H }} onMouseLeave={() => setFoco(null)}>
+    <div className={"fig" + (altura ? "" : " auto")} ref={ref} style={altura ? { height: altura } : undefined} onMouseLeave={() => setFoco(null)}>
       {W > 0 && (
         <svg role="img" aria-label={`Gráfico de colunas com ${n} categorias`}>
           {ticks.map((t) => (
@@ -109,10 +111,10 @@ export function Colunas({ categorias, series, altura = 240, unidade = "vagas" })
 }
 
 /** Barras horizontais simples (HTML). itens: [{rotulo, valor, dica?}] */
-export function Barras({ itens, cor = "var(--s1)" }) {
+export function Barras({ itens, cor = "var(--primary)", preencher = false }) {
   const max = Math.max(1, ...itens.map((i) => i.valor));
   return (
-    <div className="hbars">
+    <div className={"hbars" + (preencher ? " fill" : "")}>
       {itens.map((i) => (
         <div className="hb" key={i.rotulo} title={i.dica || `${i.rotulo}: ${i.valor}`}>
           <span>{i.rotulo}</span>

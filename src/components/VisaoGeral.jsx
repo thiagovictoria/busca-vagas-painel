@@ -1,11 +1,9 @@
-import { COR_REC, SERIES_REC, SITUACOES } from "../config.js";
+import { COR_REC, ETAPA, SERIES_REC, SITUACOES } from "../config.js";
 import { diaCurto, fLocal, fModalidade } from "../format.js";
 import { Anel, Barras, Colunas, Legenda } from "./graficos.jsx";
 
 const DIAS = 14;
-// ate que etapa cada situacao chegou (reprovado e sem retorno: ao menos inscrita)
-const ETAPA = { nova: 0, descartada: 0, aprovada: 1, inscrita: 2, reprovado: 2, sem_retorno: 2, em_analise: 3, case: 4, entrevista: 4, proposta: 5, contratado: 6 };
-const FUNIL = ["Encontradas", "Quero me inscrever", "Inscritas", "Em análise", "Case ou entrevista", "Proposta"];
+const FUNIL = [[0, "Encontradas"], [2, "Inscrito"], [3, "Em análise"], [4, "Case ou entrevista"], [5, "Proposta"], [6, "Contratado"]];
 
 const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
 
@@ -47,8 +45,8 @@ export default function VisaoGeral({ itens, onAbrir }) {
   const acima70 = notas.filter((n) => n >= 70).length;
 
   // --- funil ---
-  const funil = FUNIL.map((rotulo, k) => ({ rotulo, valor: itens.filter((i) => (ETAPA[i.status] ?? 0) >= k).length }));
-  const inscritas = funil[2].valor;
+  const funil = FUNIL.map(([k, rotulo]) => ({ rotulo, valor: itens.filter((i) => (ETAPA[i.status] ?? 0) >= k).length }));
+  const inscritas = funil[1].valor;
 
   // --- melhores para avaliar ---
   const melhores = itens
@@ -68,7 +66,7 @@ export default function VisaoGeral({ itens, onAbrir }) {
 
   return (
     <div className="grid">
-      <section className="panel wide">
+      <section className="panel w8">
         <h3>Vagas encontradas por dia</h3>
         <p className="sub">
           {plural(noPeriodo, "vaga", "vagas")} nos últimos {DIAS} dias, {plural(recomendadas, "recomendada", "recomendadas")} pela IA.
@@ -96,23 +94,6 @@ export default function VisaoGeral({ itens, onAbrir }) {
       </section>
 
       <section className="panel">
-        <h3>Distribuição das notas</h3>
-        <p className="sub">
-          {media == null ? "Sem notas ainda." : `Nota média ${media}; ${plural(acima70, "vaga", "vagas")} com 70 ou mais.`}
-        </p>
-        <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--s1)" }]} altura={220} />
-      </section>
-
-      <section className="panel">
-        <h3>Andamento das candidaturas</h3>
-        <p className="sub">
-          {inscritas ? `${plural(inscritas, "inscrição", "inscrições")} até agora.` : "Nenhuma inscrição ainda."}
-          {descartadas ? ` ${plural(descartadas, "vaga descartada", "vagas descartadas")}.` : ""}
-        </p>
-        <Barras itens={funil} />
-      </section>
-
-      <section className="panel third">
         <h3>Melhores para avaliar</h3>
         <p className="sub">As de maior nota esperando sua decisão.</p>
         {melhores.length ? (
@@ -130,15 +111,29 @@ export default function VisaoGeral({ itens, onAbrir }) {
         ) : <p className="foot">Nada esperando avaliação.</p>}
       </section>
 
-      <section className="panel third">
-        <h3>Modelo de trabalho</h3>
-        <p className="sub">Todas as vagas encontradas.</p>
-        <Barras itens={modelos} />
+      <section className="panel">
+        <h3>Distribuição das notas</h3>
+        <p className="sub">
+          {media == null ? "Sem notas ainda." : `Nota média ${media}; ${plural(acima70, "vaga", "vagas")} com 70 ou mais.`}
+        </p>
+        <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]} />
       </section>
 
-      <section className="panel third">
-        <h3>Localidades</h3>
-        <p className="sub">Onde estão as vagas encontradas.</p>
+      <section className="panel">
+        <h3>Andamento das candidaturas</h3>
+        <p className="sub">
+          {inscritas ? `${plural(inscritas, "inscrição", "inscrições")} até agora.` : "Nenhuma inscrição ainda."}
+          {descartadas ? ` ${plural(descartadas, "vaga descartada", "vagas descartadas")}.` : ""}
+        </p>
+        <Barras itens={funil} preencher />
+      </section>
+
+      <section className="panel">
+        <h3>Onde estão as vagas</h3>
+        <p className="sub">Todas as {plural(itens.length, "vaga encontrada", "vagas encontradas")}.</p>
+        <h4>Modelo de trabalho</h4>
+        <Barras itens={modelos} />
+        <h4>Localidades</h4>
         <Barras itens={localidades} />
       </section>
     </div>

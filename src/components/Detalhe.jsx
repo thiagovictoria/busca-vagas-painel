@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { COR_REC, CRIT, STATUS, sb } from "../config.js";
+import { COR_REC, CRIT, ESCOLHAS_STATUS, STATUS, sb } from "../config.js";
 import { fData, fHora, fLocal, fModalidade, fSal } from "../format.js";
 import { Anel } from "./graficos.jsx";
 import { Recomendacao } from "./VagaLinha.jsx";
@@ -108,7 +108,7 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
           <form className="form" onSubmit={salvar}>
             <label>Situação
               <select {...campo("status")}>
-                {Object.keys(STATUS).map((s) => <option key={s} value={s}>{STATUS[s]}</option>)}
+                {ESCOLHAS_STATUS.concat(ESCOLHAS_STATUS.includes(form.status) ? [] : [form.status]).map((s) => <option key={s} value={s}>{STATUS[s]}</option>)}
               </select>
             </label>
             <label>Data da inscrição<input type="date" {...campo("data")} /></label>

@@ -20,10 +20,10 @@ const RECARREGAR_MIN = 5; // busca dados novos sozinho a cada 5 minutos
 function Marca() {
   return (
     <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
-      <rect width="30" height="30" rx="8" fill="#e6f5c8" />
-      <rect x="7" y="15" width="4" height="8" rx="1.5" fill="#00463c" />
-      <rect x="13" y="11" width="4" height="12" rx="1.5" fill="#00463c" />
-      <rect x="19" y="7" width="4" height="16" rx="1.5" fill="#00463c" />
+      <rect width="30" height="30" rx="8" fill="var(--primary)" />
+      <rect x="7" y="15" width="4" height="8" rx="1.5" fill="var(--primary-ink)" />
+      <rect x="13" y="11" width="4" height="12" rx="1.5" fill="var(--primary-ink)" />
+      <rect x="19" y="7" width="4" height="16" rx="1.5" fill="var(--primary-ink)" />
     </svg>
   );
 }
@@ -40,7 +40,7 @@ export default function App() {
   const [mod, setMod] = useState("todos");
   const [atualizadoEm, setAtualizadoEm] = useState(null);
   const [menu, setMenu] = useState(false);
-  const [rec, setRec] = useState(guardar.get("rec", "todas"));
+  const [rec, setRec] = useState(() => { const r = guardar.get("rec", "todas"); return r === "eliminado" ? "todas" : r; });
   const [ordem, setOrdem] = useState(guardar.get("ord", "nota"));
   const [busca, setBusca] = useState("");
   const [aberta, setAberta] = useState(null);
@@ -156,38 +156,19 @@ export default function App() {
   if (!sessao) return <Login />;
 
   const linha = (it) => <VagaLinha key={it.chave_unica} it={it} onMudar={mudar} onAbrir={setAberta} />;
-  const filtrando = busca.trim() || rec !== "todas" || loc !== "todas" || mod !== "todos";
+  const filtrando = busca.trim() || (aba === "vagas" && rec !== "todas") || loc !== "todas" || mod !== "todos";
   const vazio = filtrando
     ? "Nada encontrado com esses filtros."
-    : aba === "candidaturas" ? "Nenhuma candidatura ainda. Marque vagas como “Quero me inscrever” na aba Vagas."
+    : aba === "candidaturas" ? "Nenhuma candidatura ainda. Depois de se candidatar na Gupy, clique em “Inscrito” na vaga."
     : { avaliar: "Nenhuma vaga esperando avaliação.", eliminadas: "Nenhuma vaga eliminada.", encerradas: "Nenhuma vaga encerrada antes de você decidir.", descartadas: "Nenhuma vaga descartada." }[sit];
   const limpar = () => { setBusca(""); escolherRec("todas"); setLoc("todas"); setMod("todos"); };
   const itemAberto = aberta && itens.find((x) => x.chave_unica === aberta.chave_unica);
 
   return (
     <>
-      <header className="band">
-        <div className="wrap">
-          <div className="top">
-            <div className="brand"><Marca /><h1>Busca de vagas</h1></div>
-            <div className="who">
-              <span className={"live" + (carregando ? " on" : "")} title={`Atualiza sozinho a cada ${RECARREGAR_MIN} minutos`}>
-                <i /><span>{carregando ? "Atualizando…" : atualizadoEm ? "Atualizado às " + atualizadoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}</span>
-              </span>
-              <div className="menu">
-                <button className="avatar" type="button" aria-label="Conta" aria-expanded={menu} onClick={() => setMenu(!menu)}>
-                  {(sessao.user.email || "?")[0].toUpperCase()}
-                </button>
-                {menu && (
-                  <div className="menu-pop">
-                    <p>{sessao.user.email}</p>
-                    <button className="btn ghost" type="button" onClick={() => { setMenu(false); sb.auth.signOut(); }}>Sair</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-          <Resumo itens={itens} ultima={ultima} porSit={porSit} />
+      <header className="topbar">
+        <div className="wrap topbar-in">
+          <div className="brand"><Marca /><h1>Busca de vagas</h1></div>
           <nav className="tabs" role="tablist">
             {ROTULO_ABAS.map(([k, rotulo]) => (
               <button key={k} className="tab" role="tab" type="button" aria-selected={aba === k} onClick={() => escolherAba(k)}>
@@ -195,8 +176,26 @@ export default function App() {
               </button>
             ))}
           </nav>
+          <div className="who">
+            <span className={"live" + (carregando ? " on" : "")}
+              title={`Atualiza sozinho a cada ${RECARREGAR_MIN} minutos` + (ultima ? ` · última coleta do robô: ${new Date(ultima.terminado_em || ultima.ciclo).toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" })}` : "")}>
+              <i /><span>{carregando ? "Atualizando…" : atualizadoEm ? "Atualizado às " + atualizadoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}</span>
+            </span>
+            <div className="menu">
+              <button className="avatar" type="button" aria-label="Conta" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+                {(sessao.user.email || "?")[0].toUpperCase()}
+              </button>
+              {menu && (
+                <div className="menu-pop">
+                  <p>{sessao.user.email}</p>
+                  <button className="btn ghost" type="button" onClick={() => { setMenu(false); sb.auth.signOut(); }}>Sair</button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </header>
+      <Resumo itens={itens} porSit={porSit} />
 
       <main className="wrap" onClick={() => menu && setMenu(false)}>
         {aba === "visao" ? (
@@ -204,37 +203,47 @@ export default function App() {
           : <VisaoGeral itens={itens} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
-          {aba === "vagas" && (
-            <div className="chips" role="group" aria-label="Situação">
-              {Object.entries(SITUACOES).map(([k, x]) => (
-                <button key={k} className="chip" type="button" aria-pressed={sit === k} onClick={() => setSit(k)}>
-                  {x.nome}<b className="n">{(porSit[k] || []).length}</b>
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="bar-top">
+            {aba === "vagas" ? (
+              <div className="chips" role="group" aria-label="Situação">
+                {Object.entries(SITUACOES).map(([k, x]) => (
+                  <button key={k} className="chip" type="button" aria-pressed={sit === k} onClick={() => setSit(k)}>
+                    {x.nome}<b className="n">{(porSit[k] || []).length}</b>
+                  </button>
+                ))}
+              </div>
+            ) : <span />}
+            {filtrando && <button className="btn sm soft" type="button" onClick={limpar}>✕ Limpar filtros</button>}
+          </div>
           <div className="filtros">
-            <input type="search" placeholder="Buscar por cargo ou empresa" aria-label="Buscar" value={busca} onChange={(e) => setBusca(e.target.value)} />
-            {aba === "vagas" && (
-              <select aria-label="Recomendação" value={rec} onChange={(e) => escolherRec(e.target.value)}>
-                <option value="todas">Recomendação</option>
-                {Object.entries(REC).map(([k, n]) => <option key={k} value={k}>{n}</option>)}
+            <label className="busca">Buscar
+              <input type="search" placeholder="Cargo ou empresa" value={busca} onChange={(e) => setBusca(e.target.value)} />
+            </label>
+            <label>Recomendação
+              <select value={rec} onChange={(e) => escolherRec(e.target.value)} disabled={aba !== "vagas"}>
+                <option value="todas">Todas</option>
+                {Object.entries(REC).filter(([k]) => k !== "eliminado").map(([k, n]) => <option key={k} value={k}>{n}</option>)}
               </select>
-            )}
-            <select aria-label="Localidade" value={loc} onChange={(e) => setLoc(e.target.value)}>
-              <option value="todas">Localidade</option>
-              {localidades.map((l) => <option key={l} value={l}>{l}</option>)}
-            </select>
-            <select aria-label="Modelo de trabalho" value={mod} onChange={(e) => setMod(e.target.value)}>
-              <option value="todos">Modelo</option>
-              {modelos.map((m) => <option key={m} value={m}>{m}</option>)}
-            </select>
-            <select aria-label="Ordenar" value={ordem} onChange={(e) => escolherOrdem(e.target.value)}>
-              <option value="nota">Maior nota</option>
-              <option value="data">Mais recentes</option>
-              <option value="prazo">Prazo mais próximo</option>
-            </select>
-            {filtrando && <button className="btn sm ghost" type="button" onClick={limpar}>Limpar filtros</button>}
+            </label>
+            <label>Localidade
+              <select value={loc} onChange={(e) => setLoc(e.target.value)}>
+                <option value="todas">Todas</option>
+                {localidades.map((l) => <option key={l} value={l}>{l}</option>)}
+              </select>
+            </label>
+            <label>Modelo de trabalho
+              <select value={mod} onChange={(e) => setMod(e.target.value)}>
+                <option value="todos">Todos</option>
+                {modelos.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </label>
+            <label>Ordenar por
+              <select value={ordem} onChange={(e) => escolherOrdem(e.target.value)}>
+                <option value="nota">Maior nota</option>
+                <option value="data">Mais recentes</option>
+                <option value="prazo">Prazo mais próximo</option>
+              </select>
+            </label>
           </div>
         </div>
 

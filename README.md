@@ -31,6 +31,19 @@ busca-vagas-painel/
         └── Aviso.jsx              aviso "salvo / desfazer"
 ```
 
+## Design system
+
+Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):
+
+| Grupo | Tokens | Uso |
+|---|---|---|
+| Superfícies | `--bg`, `--surface`, `--surface-2`, `--line` | fundo, cartões, realces, bordas |
+| Texto | `--ink`, `--mute`, `--faint` | principal, secundário, eixos |
+| Marca | `--primary`, `--primary-ink`, `--primary-soft` | botões, aba ativa, seleção |
+| Dados | `--s1` candidatar, `--s2` avaliar, `--s3` pular, `--s4` eliminado | gráficos e etiquetas (validadas para daltonismo) |
+
+Raio 12px nos cartões e 10px nos controles; fontes Inter Tight (títulos) e Inter (texto).
+
 ## Rodar no seu PC (opcional)
 
 ```

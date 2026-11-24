@@ -33,9 +33,8 @@ export function fSal(v) {
 const MODALIDADE = { remote: "Remoto", hybrid: "Híbrido", "on-site": "Presencial", onsite: "Presencial", presencial: "Presencial" };
 export const fModalidade = (m) => (m ? MODALIDADE[String(m).toLowerCase()] || m : "");
 
-// Localidade: "Rio de Janeiro / RJ"; vaga remota sem cidade vira "Remoto"
-export const fLocal = (v) =>
-  [v.cidade, v.estado].filter(Boolean).join(" / ") || (fModalidade(v.modalidade) === "Remoto" ? "Remoto" : "Não informada");
+// Localidade: so o nome da cidade; vaga remota sem cidade vira "Remoto"
+export const fLocal = (v) => v.cidade || (fModalidade(v.modalidade) === "Remoto" ? "Remoto" : "Não informada");
 
 export const diaCurto = (d) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 

@@ -9,11 +9,11 @@ function Arte() {
       <line x1="0" x2="520" y1="200" y2="200" stroke="rgba(255,255,255,.25)" />
       {cols.map((h, i) => (
         <rect key={i} x={20 + i * 46} y={200 - h} width="24" height={h} rx="4"
-          fill={i === cols.length - 1 ? "#e6f5c8" : "rgba(230,245,200,.28)"} />
+          fill={i === cols.length - 1 ? "#7ee0cf" : "rgba(191,230,223,.25)"} />
       ))}
       <g transform="translate(440 64)">
         <circle r="44" fill="none" stroke="rgba(255,255,255,.15)" strokeWidth="9" />
-        <circle r="44" fill="none" stroke="#e6f5c8" strokeWidth="9" strokeLinecap="round"
+        <circle r="44" fill="none" stroke="#7ee0cf" strokeWidth="9" strokeLinecap="round"
           strokeDasharray={`${2 * Math.PI * 44 * 0.92} 999`} transform="rotate(-90)" />
         <text y="10" textAnchor="middle" fill="#fff" style={{ font: "700 28px 'Inter Tight', sans-serif" }}>92</text>
       </g>

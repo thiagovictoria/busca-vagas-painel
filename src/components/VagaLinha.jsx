@@ -1,4 +1,4 @@
-import { COR_REC, GRUPOS_CAND, REC, STATUS, encerrada } from "../config.js";
+import { COR_REC, ESCOLHAS_STATUS, GRUPOS_CAND, REC, STATUS, encerrada } from "../config.js";
 import { fData, fLocal, fModalidade, fRel, fSal } from "../format.js";
 import { Anel } from "./graficos.jsx";
 
@@ -16,24 +16,18 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
   const modelo = fModalidade(v.modalidade);
 
   let acoes = null;
-  if (it.status === "nova" && !fechada)
+  // "Inscrito": voce se candidatou na Gupy e confirma aqui
+  if ((it.status === "nova" && !fechada) || it.status === "aprovada")
     acoes = (
       <>
-        <button className="btn sm pri" onClick={() => onMudar(it, "aprovada")}>Quero me inscrever</button>
-        <button className="btn sm warn" onClick={() => onMudar(it, "descartada")}>Descartar</button>
-      </>
-    );
-  else if (it.status === "aprovada")
-    acoes = (
-      <>
-        <button className="btn sm pri" onClick={() => onMudar(it, "inscrita")}>Marcar inscrita</button>
+        <button className="btn sm pri" onClick={() => onMudar(it, "inscrita")} title="Marque depois de se candidatar na Gupy">✓ Inscrito</button>
         <button className="btn sm warn" onClick={() => onMudar(it, "descartada")}>Descartar</button>
       </>
     );
   else if (GRUPOS_CAND.includes(it.status))
     acoes = (
       <select aria-label="Situação" value={it.status} onChange={(e) => onMudar(it, e.target.value)}>
-        {Object.keys(STATUS).filter((s) => s !== "nova").map((s) => (
+        {ESCOLHAS_STATUS.filter((s) => s !== "nova").map((s) => (
           <option key={s} value={s}>{STATUS[s]}</option>
         ))}
       </select>
