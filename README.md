@@ -1,6 +1,6 @@
 # Garimpo
 
-_Garimpe as vagas que combinam com você._
+_Encontre as vagas que combinam com você._
 
 Marca "Mata & Ouro": um "g" minúsculo cor de areia com uma pepita de ouro dentro do olho da letra, sobre verde-mata. Cores: mata #0f2e26, verde #1f5c4c, areia #f5f1e8, ouro #e0ac3f (só como acento). Letras: Manrope (títulos) e Inter (texto). Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
 
