@@ -40,12 +40,14 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
     itens.forEach((i) => { const k = f(i.vaga); m.set(k, (m.get(k) || 0) + 1); });
     return [...m].map(([rotulo, valor]) => ({ rotulo, valor })).sort((a, b) => b.valor - a.valor);
   };
-  const modelos = conta((v) => fModalidade(v.modalidade) || "Não informado");
-  const localidades = conta(fLocal).slice(0, 6);
+  const modelosConta = conta((v) => fModalidade(v.modalidade) || "Não informado");
+  const modelos = ["Presencial", "Híbrido", "Remoto"].map((m) => modelosConta.find((x) => x.rotulo === m) || { rotulo: m, valor: 0 })
+    .concat(modelosConta.filter((x) => !["Presencial", "Híbrido", "Remoto"].includes(x.rotulo)));
+  const localidades = conta(fLocal).slice(0, 5);
 
   return (
     <div className="grid">
-      <section className="panel w8">
+      <section className="panel w8 l1">
         <div className="phead">
           <h3>Vagas encontradas {titulo}</h3>
           <label className="pctl">Período
@@ -77,7 +79,7 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
         </details>
       </section>
 
-      <section className="panel">
+      <section className="panel l1">
         <h3>Melhores para avaliar</h3>
         <p className="sub">As de maior nota esperando sua decisão.</p>
         {melhores.length ? (
@@ -86,8 +88,8 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
               <li key={it.chave_unica}>
                 <Anel nota={it.vaga.nota_match} cor={COR_REC[it.vaga.match_recomendacao] || "var(--faint)"} />
                 <div>
-                  <button className="ttl" type="button" onClick={() => onAbrir(it)}>{it.vaga.titulo}</button>
-                  <small>{it.vaga.empresa}</small>
+                  <button className="ttl um" type="button" title={it.vaga.titulo} onClick={() => onAbrir(it)}>{it.vaga.titulo}</button>
+                  <small className="um">{it.vaga.empresa}</small>
                 </div>
               </li>
             ))}
@@ -95,17 +97,17 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
         ) : <p className="foot">Nada esperando avaliação.</p>}
       </section>
 
-      <section className="panel">
+      <section className="panel l2">
         <h3>Distribuição das notas</h3>
         <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]} />
       </section>
 
-      <section className="panel">
+      <section className="panel l2">
         <h3>Vagas encontradas</h3>
         <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} />
       </section>
 
-      <section className="panel">
+      <section className="panel l2">
         <h3>Onde estão as vagas</h3>
         <h4>Modelo de trabalho</h4>
         <Barras itens={modelos} />
