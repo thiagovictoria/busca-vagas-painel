@@ -1,8 +1,8 @@
 # Garimpo
 
-_Menos cascalho. Mais vagas que valem ouro._
+_Garimpe as vagas que combinam com você._
 
-Marca ("Pepita"): uma pepita de ouro lapidada, com facetas separadas por linhas grafite, e um brilho, sobre grafite; letra Sora; cores grafite #17181c, ouro #e8a314, brilho #ffd36b, sombra #c7850a, papel #f6f4ef. Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
+Marca "Mata & Ouro": um "g" minúsculo cor de areia com uma pepita de ouro dentro do olho da letra, sobre verde-mata. Cores: mata #0f2e26, verde #1f5c4c, areia #f5f1e8, ouro #e0ac3f (só como acento). Letras: Manrope (títulos) e Inter (texto). Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
 
 
 Painel em **React + CSS** (Vite) para avaliar vagas e acompanhar candidaturas.
@@ -49,11 +49,12 @@ Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):
 |---|---|---|
 | Superfícies | `--bg`, `--surface`, `--surface-2`, `--line` | fundo, cartões, realces, bordas |
 | Texto | `--ink`, `--mute`, `--faint` | principal, secundário, eixos |
-| Marca | `--primary` (ouro), `--primary-ink` (grafite), `--primary-text`, `--primary-soft` | botões, aba ativa, seleção, textos em ouro legíveis |
-| Gráficos | `--bar` | barras de uma série só (o ouro fica para destaque) |
+| Marca | `--mata`, `--primary` (verde), `--primary-ink`, `--primary-text`, `--primary-soft` | barra superior, botões, seleção |
+| Acento | `--ouro`, `--ouro-text`, `--ouro-soft` | logo, aba ativa, achados (uso escasso) |
+| Gráficos | `--bar` | barras de uma série só (verde) |
 | Dados | `--s1` candidatar (ouro), `--s2` avaliar (verde), `--s3` pular (azul), `--s4` eliminado (vermelho) | gráficos e etiquetas (validadas para daltonismo) |
 
-Raio 12px nos cartões e 10px nos controles; fontes Sora (títulos e números) e Inter (texto), empacotadas no site.
+Raio 12px nos cartões e 10px nos controles; fontes Manrope (títulos e números) e Inter (texto), empacotadas no site.
 
 ## Rodar no seu PC (opcional)
 

@@ -2,22 +2,28 @@ import { useState } from "react";
 import { sb } from "../config.js";
 import { Pepita, Simbolo } from "./Logo.jsx";
 
-// Ilustracao: o garimpo. Muitas pedras cinzas (o cascalho) e poucas pepitas de ouro (as vagas que combinam)
+// Ilustracao: a bateia vista de cima — circulos na agua, graos de areia e uma pepita no centro (o achado)
 function Arte() {
-  // [x, y, raio]
-  const pedras = [
-    [40, 178, 14], [78, 190, 10], [112, 172, 17], [150, 192, 9], [182, 176, 13], [222, 188, 11], [258, 170, 16],
-    [298, 190, 10], [332, 176, 14], [372, 188, 9], [404, 172, 15], [444, 190, 11], [478, 178, 13],
-    [60, 150, 9], [134, 140, 8], [204, 150, 10], [316, 146, 8], [388, 140, 9], [458, 150, 8],
+  const aneis = [150, 122, 96, 72, 50];
+  // graos de areia espalhados (fixos, para a imagem nao mudar a cada visita)
+  const graos = [
+    [-118, -40, 2.2], [-96, 58, 1.6], [-70, -96, 1.8], [-40, 104, 2.4], [-128, 20, 1.4], [-20, -126, 1.6],
+    [30, 118, 1.8], [62, -104, 2.2], [98, 64, 1.6], [120, -30, 2.4], [132, 18, 1.4], [84, -70, 1.8],
+    [-58, 30, 1.4], [44, 40, 1.6], [-30, -58, 1.8], [52, -36, 1.4], [-84, -62, 1.6], [8, 76, 1.4],
   ];
-  // [x, y, escala, giro]
-  const pepitas = [[196, 28, 1.95, -8], [52, 88, 1.0, 14], [376, 58, 1.3, -18]];
   return (
-    <svg viewBox="0 0 520 220" aria-hidden="true">
-      {pedras.map(([x, y, r], i) => <ellipse key={i} cx={x} cy={y} rx={r} ry={r * 0.78} fill="#2a2b31" />)}
-      {pepitas.map(([x, y, k, g], i) => (
-        <g key={i} transform={`translate(${x} ${y}) rotate(${g} 32 32) scale(${k})`}><Pepita /></g>
+    <svg viewBox="-170 -170 340 340" aria-hidden="true" className="bateia">
+      <circle r="160" fill="#123a30" />
+      {aneis.map((r, i) => (
+        <circle key={r} r={r} fill="none" stroke="#f3ecdc" strokeOpacity={0.07 + i * 0.03} strokeWidth="1.5"
+          strokeDasharray={i % 2 ? "4 10" : undefined} />
       ))}
+      {graos.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill="#c9bfa8" opacity=".55" />)}
+      <circle r="34" fill="#e0ac3f" opacity=".12" />
+      <Pepita k={3.1} giro={-10} />
+      <Pepita x={-92} y={-18} k={0.9} giro={20} />
+      <Pepita x={74} y={88} k={0.7} giro={-30} />
+      <path d="M30-46c.7 4 2.3 5.6 6.3 6.3-4 .7-5.6 2.3-6.3 6.3-.7-4-2.3-5.6-6.3-6.3 4-.7 5.6-2.3 6.3-6.3z" fill="#fff4d6" />
     </svg>
   );
 }
@@ -42,8 +48,8 @@ export default function Login() {
     <div className="login">
       <section className="login-art">
         <div>
-          <div className="login-marca"><Simbolo tamanho={56} fundo="#202127" /><h1>garimpo</h1></div>
-          <p>Menos cascalho.<br />Mais vagas que <b>valem ouro</b>.</p>
+          <div className="login-marca"><Simbolo tamanho={56} fundo="#163d33" /><h1>garimpo</h1></div>
+          <p>Garimpe as vagas que <b>combinam com você</b>.</p>
         </div>
         <Arte />
       </section>
