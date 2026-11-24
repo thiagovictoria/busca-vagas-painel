@@ -7,6 +7,7 @@ import VagaLinha from "./components/VagaLinha.jsx";
 import Detalhe from "./components/Detalhe.jsx";
 import Aviso from "./components/Aviso.jsx";
 import VisaoGeral from "./components/VisaoGeral.jsx";
+import Logo from "./components/Logo.jsx";
 import { anosDasVagas, aplicarSelecao, noPeriodo, semSelecao } from "./periodo.js";
 
 const ORDENS = {
@@ -17,17 +18,6 @@ const ORDENS = {
 const ROTULO_ABAS = [["visao", "Visão geral"], ["vagas", "Vagas"], ["candidaturas", "Candidaturas"]];
 const unicos = (lista) => [...new Set(lista)].sort((a, b) => a.localeCompare(b, "pt-BR"));
 const RECARREGAR_MIN = 5; // busca dados novos sozinho a cada 5 minutos
-
-function Marca() {
-  return (
-    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
-      <rect width="30" height="30" rx="8" fill="var(--primary)" />
-      <rect x="7" y="15" width="4" height="8" rx="1.5" fill="var(--primary-ink)" />
-      <rect x="13" y="11" width="4" height="12" rx="1.5" fill="var(--primary-ink)" />
-      <rect x="19" y="7" width="4" height="16" rx="1.5" fill="var(--primary-ink)" />
-    </svg>
-  );
-}
 
 export default function App() {
   const [sessao, setSessao] = useState(undefined); // undefined = ainda verificando
@@ -168,7 +158,7 @@ export default function App() {
     <>
       <header className="topbar">
         <div className="wrap topbar-in">
-          <div className="brand"><Marca /><h1>Busca de vagas</h1></div>
+          <div className="brand"><h1 aria-label="Garimpo"><Logo /></h1></div>
           <nav className="tabs" role="tablist">
             {ROTULO_ABAS.map(([k, rotulo]) => (
               <button key={k} className="tab" role="tab" type="button" aria-selected={aba === k} onClick={() => escolherAba(k)}>

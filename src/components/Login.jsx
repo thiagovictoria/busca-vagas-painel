@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { sb } from "../config.js";
+import { Simbolo } from "./Logo.jsx";
 
 // Ilustracao: colunas subindo com um anel de nota, no clima do painel
 function Arte() {
@@ -41,8 +42,8 @@ export default function Login() {
     <div className="login">
       <section className="login-art">
         <div>
-          <h1>Busca de vagas</h1>
-          <p>As vagas certas, avaliadas e acompanhadas num só lugar.</p>
+          <div className="login-marca"><Simbolo tamanho={52} fundo="#0b5f58" /><h1>garimpo</h1></div>
+          <p>As melhores vagas, garimpadas e avaliadas para você.</p>
         </div>
         <Arte />
       </section>

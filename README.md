@@ -1,4 +1,9 @@
-# Painel de vagas
+# Garimpo
+
+_As melhores vagas, garimpadas e avaliadas para você._
+
+Marca: uma gema lapidada com um brilho (a vaga boa separada do cascalho), sobre o verde-petróleo da marca. Símbolo em `src/components/Logo.jsx` e `public/favicon.svg`.
+
 
 Painel em **React + CSS** (Vite) para avaliar vagas e acompanhar candidaturas.
 Os dados ficam no Supabase e só aparecem com login (cadastro de novos usuários desligado e RLS ativo).
