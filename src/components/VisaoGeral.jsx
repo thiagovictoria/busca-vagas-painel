@@ -84,7 +84,7 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSe
 
       <div className="wrap">
         <div className="grid">
-          <section className="panel w9 l1">
+          <section className="panel w8 l1">
             <div className="phead">
               <h3>Vagas encontradas {titulo}</h3>
               <label className="pctl">Período
@@ -116,9 +116,9 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSe
             </details>
           </section>
 
-          <section className="panel w3 l1">
+          <section className="panel w4 l1">
             <h3>Melhores para avaliar</h3>
-            <p className="sub">Maiores notas sem decisão.</p>
+            <p className="sub">As de maior nota esperando sua decisão.</p>
             {melhores.length ? (
               <ul className="top5">
                 {melhores.map((it) => (
@@ -134,13 +134,13 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSe
             ) : <p className="foot">Nada esperando avaliação com esses filtros.</p>}
           </section>
 
-          <section className="panel w6 l2">
+          <section className="panel w4 l2">
             <h3>Distribuição das notas</h3>
             <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]}
               selecionado={sel.nota} onSelecionar={alternar("nota")} />
           </section>
 
-          <section className="panel w3 l2">
+          <section className="panel w4 l2">
             <h3>Vagas encontradas</h3>
             <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
           </section>

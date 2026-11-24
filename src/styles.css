@@ -132,12 +132,11 @@ textarea{min-height:96px;resize:vertical;width:100%}
 /* visao geral */
 .grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:12px;padding:12px 0 96px}
 .panel{display:flex;flex-direction:column;grid-column:span 4;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow)}
-/* grade de 12 colunas alinhada aos 4 numeros do topo (cada numero = 3 colunas) */
-.panel.w9{grid-column:span 9}
-.panel.w6{grid-column:span 6}
-.panel.w3{grid-column:span 3}
+/* grade de 12 colunas: linha 1 = 8 + 4; linha 2 = 4 + 4 + 4 */
+.panel.w8{grid-column:span 8}
+.panel.w4{grid-column:span 4}
 /* Modelo de trabalho e Localidades: dois cartoes empilhados, com a mesma altura dos vizinhos */
-.pilha{grid-column:span 3;display:flex;flex-direction:column;gap:12px;min-height:460px}
+.pilha{grid-column:span 4;display:flex;flex-direction:column;gap:12px;min-height:460px}
 .pilha .panel{flex:1;padding:14px 18px}
 .pilha .panel h3{margin-bottom:8px}
 /* alturas minimas fixas: os cartoes nao mudam de tamanho ao trocar o periodo */
@@ -238,9 +237,9 @@ dialog::backdrop{background:rgba(10,14,20,.5)}
 
 @media(max-width:1000px){
   .grid{grid-auto-flow:dense}
-  .panel,.panel.w9{grid-column:1/-1}
-  .panel.w6{grid-column:span 6}
-  .panel.w3,.pilha{grid-column:span 6}
+  .panel,.panel.w8{grid-column:1/-1}
+  .panel.w4{grid-column:span 6}
+  .pilha{grid-column:span 6}
   .filtros{grid-template-columns:repeat(2,minmax(0,1fr))}
   .filtros .busca{grid-column:1/-1}
 }
@@ -264,7 +263,7 @@ dialog::backdrop{background:rgba(10,14,20,.5)}
   .cr{grid-template-columns:90px minmax(0,1fr) 50px}
   .dh,.db{padding-left:16px;padding-right:16px}
   .panel{padding:16px}
-  .panel.w3,.pilha,.panel.w6{grid-column:1/-1}
+  .panel.w4,.pilha{grid-column:1/-1}
   .panel.l1,.panel.l2,.pilha{min-height:0}
   .fig.auto{min-height:220px;flex:none}
   .filtros-ativos{bottom:12px;padding:6px 8px}
