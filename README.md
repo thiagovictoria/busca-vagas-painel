@@ -52,7 +52,7 @@ Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):
 | Marca | `--mata`, `--primary` (verde), `--primary-ink`, `--primary-text`, `--primary-soft` | barra superior, botões, seleção |
 | Acento | `--ouro`, `--ouro-text`, `--ouro-soft` | logo, aba ativa, achados (uso escasso) |
 | Gráficos | `--bar` | barras de uma série só (verde) |
-| Dados | `--s1` candidatar (ouro), `--s2` avaliar (verde), `--s3` pular (azul), `--s4` eliminado (vermelho) | gráficos e etiquetas (validadas para daltonismo) |
+| Dados | `--s1` candidatar (verde), `--s2` avaliar (ouro), `--s3` pular (azul), `--s4` eliminado (vermelho) | gráficos e etiquetas (validadas para daltonismo) |
 
 Raio 12px nos cartões e 10px nos controles; fontes Manrope (títulos e números) e Inter (texto), empacotadas no site.
 

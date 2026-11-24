@@ -9,7 +9,7 @@
    texto:       --ink · --mute · --faint
    marca:       --mata (barra superior e entrada) · --primary verde (botões e seleção) · --primary-ink · --primary-text · --primary-soft
    acento:      --ouro (logo, aba ativa, achados) · --ouro-text (ouro legível como texto) · --ouro-soft
-   gráficos:    --bar verde (série única) · --s1 candidatar (ouro, o "achado") · --s2 avaliar (verde) · --s3 pular (azul) · --s4 eliminado (vermelho)
+   gráficos:    --bar verde (série única) · --s1 candidatar (verde) · --s2 avaliar (ouro) · --s3 pular (azul) · --s4 eliminado (vermelho)
    regra: o ouro é escasso — no máximo um destaque dourado por bloco.
    raio 12px nos cartões, 10px nos controles, 999px em etiquetas; espaçamento em múltiplos de 4px. */
 :root{color-scheme:light dark;
@@ -20,7 +20,7 @@
   --primary-text:light-dark(#1f5c4c,#7fd0b8);--primary-soft:light-dark(#e2efe9,#173a31);
   --ouro:#e0ac3f;--ouro-claro:#f7d58a;--ouro-text:light-dark(#8a6410,#f0c25a);--ouro-soft:light-dark(#fbf0d6,#2f2714);
   --bar:light-dark(#2f6b5a,#5fae96);
-  --s1:light-dark(#d99a0b,#c98500);--s2:light-dark(#0b8a6a,#1a9a77);--s3:light-dark(#2a78d6,#3987e5);--s4:light-dark(#d9483b,#e0604c);
+  --s1:light-dark(#0b8a6a,#1a9a77);--s2:light-dark(#d99a0b,#c98500);--s3:light-dark(#2a78d6,#3987e5);--s4:light-dark(#d9483b,#e0604c);
   --alert-ink:light-dark(#b8321f,#ff8f7d);--alert-soft:light-dark(#fdeeec,#2c1a18);
   --grid:light-dark(#ece6d9,#1a2722);
   --shadow:0 1px 2px rgba(15,46,38,.06)}
