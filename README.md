@@ -34,7 +34,7 @@ busca-vagas-painel/
 
 ## Visão geral: filtro cruzado
 
-Clicar numa coluna (dia/mês ou faixa de nota), numa fatia da rosca ou numa barra (modelo, localidade) filtra todos os outros gráficos e os números do topo. Os filtros ativos aparecem no topo; clique de novo ou no ✕ para tirar.
+Clicar numa coluna (dia/mês ou faixa de nota), numa fatia da rosca ou numa barra (modelo, localidade) filtra todos os outros gráficos e os números do topo. Os filtros ativos aparecem no topo; clique de novo ou no ✕ para tirar. Modelo de trabalho e Localidades ficam em cartões separados.
 
 ## Design system
 

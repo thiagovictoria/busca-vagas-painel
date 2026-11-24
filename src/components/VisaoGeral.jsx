@@ -94,9 +94,7 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
             ))}
             <button type="button" className="btn sm soft" onClick={() => setSel(semSelecao())}>✕ Limpar filtros</button>
           </>
-        ) : (
-          <span className="dica">Clique numa coluna, fatia ou barra para filtrar todos os gráficos.</span>
-        )}
+        ) : null}
       </div>
 
       <Resumo itens={todas} />
@@ -153,27 +151,25 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
             ) : <p className="foot">Nada esperando avaliação com esses filtros.</p>}
           </section>
 
-          <section className="panel l2">
+          <section className="panel l2 w3">
             <h3>Distribuição das notas</h3>
             <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]}
               selecionado={sel.nota} onSelecionar={alternar("nota")} />
           </section>
 
-          <section className="panel l2">
+          <section className="panel l2 w3">
             <h3>Vagas encontradas</h3>
             <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
           </section>
 
-          <section className="panel l2 onde">
-            <h3>Onde estão as vagas</h3>
-            <div className="grupo">
-              <h4>Modelo de trabalho</h4>
-              <Barras itens={modelos} preencher selecionado={sel.modelo} onSelecionar={alternar("modelo")} />
-            </div>
-            <div className="grupo">
-              <h4>Localidades</h4>
-              <Barras itens={localidades} preencher selecionado={sel.local} onSelecionar={alternar("local")} />
-            </div>
+          <section className="panel l2 w3">
+            <h3>Modelo de trabalho</h3>
+            <Barras itens={modelos} preencher selecionado={sel.modelo} onSelecionar={alternar("modelo")} />
+          </section>
+
+          <section className="panel l2 w3">
+            <h3>Localidades</h3>
+            <Barras itens={localidades} preencher selecionado={sel.local} onSelecionar={alternar("local")} />
           </section>
         </div>
       </div>
