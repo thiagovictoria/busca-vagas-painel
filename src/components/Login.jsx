@@ -48,7 +48,8 @@ export default function Login() {
     <div className="login">
       <section className="login-art">
         <div>
-          <div className="login-marca"><Simbolo tamanho={56} fundo="#163d33" /><h1>garimpo</h1></div>
+          {/* o simbolo e o proprio "g": logo + "arimpo" = garimpo */}
+          <h1 className="login-marca" aria-label="garimpo"><Simbolo fundo="#163d33" /><span aria-hidden="true">arimpo</span></h1>
           <p>Garimpe as vagas que <b>combinam com você</b>.</p>
         </div>
         <Arte />
