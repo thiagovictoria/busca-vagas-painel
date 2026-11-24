@@ -23,6 +23,9 @@ export const PIPE = ["aprovada", "inscrita", "em_analise", "case", "entrevista",
 export const EM_PROCESSO = ["inscrita", "em_analise", "case", "entrevista", "proposta"];
 export const FIM = ["descartada", "reprovado", "sem_retorno"];
 export const REC = { candidatar: "Candidatar", avaliar: "Avaliar", pular: "Pular", eliminado: "Eliminado" };
+// cores validadas para daltonismo (claro e escuro), definidas em styles.css
+export const COR_REC = { candidatar: "var(--s1)", avaliar: "var(--s2)", pular: "var(--s3)", eliminado: "var(--s4)" };
+export const SERIES_REC = Object.keys(REC).map((k) => ({ k, nome: REC[k], cor: COR_REC[k] }));
 export const CRIT = {
   tecnico: ["Técnico", 35],
   area: ["Área", 25],

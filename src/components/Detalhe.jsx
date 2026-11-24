@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { CRIT, STATUS, sb } from "../config.js";
-import { corNota, fData, fHora, fLocal, fSal } from "../format.js";
+import { COR_REC, CRIT, STATUS, sb } from "../config.js";
+import { fData, fHora, fLocal, fModalidade, fSal } from "../format.js";
+import { Anel } from "./graficos.jsx";
 import { Recomendacao } from "./VagaLinha.jsx";
 
 function Lista({ itens }) {
@@ -64,26 +65,25 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
         <button className="btn sm" type="button" onClick={() => dlg.current.close()}>Fechar</button>
       </div>
       <div className="db">
-        <div className="hero">
-          <div className={"score " + corNota(v)}>{v.nota_match ?? "–"}</div>
+        <div className="box hero">
+          <Anel grande nota={v.nota_match} cor={COR_REC[v.match_recomendacao] || "var(--faint)"} />
           <div>
             <div className="co"><Recomendacao valor={v.match_recomendacao} />{v.empresa}</div>
-            <div className="meta">
-              <span>{fLocal(v)}</span>
-              {v.modalidade && <span>{v.modalidade}</span>}
-              <span>{fSal(v)}</span>
+            <div className="pills">
+              <span className="pill">{fLocal(v)}</span>
+              {v.modalidade && <span className="pill">{fModalidade(v.modalidade)}</span>}
+              <span className="pill">{fSal(v)}</span>
             </div>
-            <p style={{ margin: "8px 0 0" }}>
+            <p style={{ margin: "10px 0 0" }}>
               <a className="link" href={v.link} target="_blank" rel="noopener noreferrer">Abrir vaga na Gupy ↗</a>
             </p>
           </div>
         </div>
 
-        {v.match_eliminatorio && <div className="elim"><b>Eliminatório:</b> {v.match_eliminatorio}</div>}
-        {v.motivo_match && <p style={{ margin: 0 }}>{v.motivo_match}</p>}
-
-        <section>
-          <h3>Nota por critério</h3>
+        <section className="box">
+          <h3>Por que essa nota</h3>
+          {v.match_eliminatorio && <div className="elim" style={{ marginTop: 0, marginBottom: 12 }}><b>Eliminatório:</b> {v.match_eliminatorio}</div>}
+          {v.motivo_match && <p style={{ margin: "0 0 16px" }}>{v.motivo_match}</p>}
           <div className="crit">
             {Object.entries(CRIT).map(([k, [nome, max]]) => {
               const n = Number(crit[k] ?? 0);
@@ -98,12 +98,12 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
           </div>
         </section>
 
-        <section className="two">
+        <section className="box two">
           <div><h3>Pontos fortes</h3><Lista itens={v.match_pontos_fortes} /></div>
           <div><h3>Lacunas</h3><Lista itens={v.match_lacunas} /></div>
         </section>
 
-        <section>
+        <section className="box">
           <h3>Minha candidatura</h3>
           <form className="form" onSubmit={salvar}>
             <label>Situação
@@ -122,7 +122,7 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
           </form>
         </section>
 
-        <section>
+        <section className="box">
           <h3>Histórico</h3>
           <ul className="hist">
             {historico === null && <li>Carregando…</li>}
@@ -139,10 +139,11 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
           </ul>
         </section>
 
-        <section>
+        <section className="box">
           <h3>Detalhes da vaga</h3>
           <dl className="kv">
             {[
+              ["Modelo", fModalidade(v.modalidade)],
               ["Contrato", v.tipo_contrato],
               ["Senioridade no título", v.senioridade_titulo],
               ["Publicada", fHora(v.publicado_em)],
@@ -155,7 +156,7 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
           </dl>
         </section>
 
-        <section>
+        <section className="box">
           <h3>Descrição</h3>
           <div className="desc">{descricao}</div>
         </section>

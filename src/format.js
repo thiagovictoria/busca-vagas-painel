@@ -28,14 +28,15 @@ export function fSal(v) {
   return v.salario_label || "Salário não informado";
 }
 
-export const fLocal = (v) => [v.cidade, v.estado].filter(Boolean).join(" / ") || "Local não informado";
 
-export function corNota(v) {
-  if (v.match_recomendacao === "eliminado") return "el";
-  const n = v.nota_match;
-  if (n == null) return "";
-  return n >= 75 ? "hi" : n >= 50 ? "mid" : "lo";
-}
+const MODALIDADE = { remote: "Remoto", hybrid: "Híbrido", "on-site": "Presencial", onsite: "Presencial", presencial: "Presencial" };
+export const fModalidade = (m) => (m ? MODALIDADE[String(m).toLowerCase()] || m : "");
+
+// "Rio de Janeiro / RJ"; vaga remota sem cidade vira "Remoto"
+export const fLocal = (v) =>
+  [v.cidade, v.estado].filter(Boolean).join(" / ") || (fModalidade(v.modalidade) === "Remoto" ? "Qualquer lugar" : "Local não informado");
+
+export const diaCurto = (d) => d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
 
 export const ms = (s) => (s ? new Date(s).getTime() : 0);
 

@@ -6,13 +6,26 @@ import Resumo from "./components/Resumo.jsx";
 import VagaLinha from "./components/VagaLinha.jsx";
 import Detalhe from "./components/Detalhe.jsx";
 import Aviso from "./components/Aviso.jsx";
+import VisaoGeral from "./components/VisaoGeral.jsx";
 
 const ORDENS = {
   nota: (x, y) => (y.vaga.nota_match ?? -1) - (x.vaga.nota_match ?? -1) || ms(y.vaga.publicado_em) - ms(x.vaga.publicado_em),
   data: (x, y) => ms(y.vaga.publicado_em) - ms(x.vaga.publicado_em),
   prazo: (x, y) => (x.vaga.prazo_inscricao || "9999").localeCompare(y.vaga.prazo_inscricao || "9999"),
 };
-const ROTULO_ABAS = [["avaliar", "Para avaliar"], ["candidaturas", "Candidaturas"], ["arquivo", "Arquivo"]];
+const ROTULO_ABAS = [["visao", "Visão geral"], ["avaliar", "Para avaliar"], ["candidaturas", "Candidaturas"], ["arquivo", "Arquivo"]];
+const RECARREGAR_MIN = 5; // busca dados novos sozinho a cada 5 minutos
+
+function Marca() {
+  return (
+    <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+      <rect width="30" height="30" rx="8" fill="#e6f5c8" />
+      <rect x="7" y="15" width="4" height="8" rx="1.5" fill="#00463c" />
+      <rect x="13" y="11" width="4" height="12" rx="1.5" fill="#00463c" />
+      <rect x="19" y="7" width="4" height="16" rx="1.5" fill="#00463c" />
+    </svg>
+  );
+}
 
 export default function App() {
   const [sessao, setSessao] = useState(undefined); // undefined = ainda verificando
@@ -20,7 +33,9 @@ export default function App() {
   const [ultima, setUltima] = useState(null);
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
-  const [aba, setAba] = useState(guardar.get("tab", "avaliar"));
+  const [aba, setAba] = useState(guardar.get("tab", "visao"));
+  const [atualizadoEm, setAtualizadoEm] = useState(null);
+  const [menu, setMenu] = useState(false);
   const [rec, setRec] = useState(guardar.get("rec", "todas"));
   const [ordem, setOrdem] = useState(guardar.get("ord", "nota"));
   const [verElim, setVerElim] = useState(guardar.get("elim", "0") === "1");
@@ -39,7 +54,6 @@ export default function App() {
   // ---------- dados ----------
   const carregar = useCallback(async () => {
     setCarregando(true);
-    setErro("");
     const todos = [];
     for (let de = 0; ; de += 1000) {
       const { data, error } = await sb.from("candidaturas").select(LISTA_COLS).range(de, de + 999);
@@ -52,17 +66,21 @@ export default function App() {
       .order("ciclo", { ascending: false }).limit(1);
     setItens(todos);
     setUltima((ex && ex[0]) || null);
+    setErro("");
+    setAtualizadoEm(new Date());
     setCarregando(false);
   }, []);
 
   const logado = !!sessao;
   useEffect(() => { if (logado) carregar(); }, [logado, carregar]);
 
-  // recarrega ao voltar para a aba do navegador (se o detalhe nao estiver aberto)
+  // atualiza sozinho: ao voltar para a pagina e a cada RECARREGAR_MIN minutos (nunca com o detalhe aberto)
   useEffect(() => {
-    const f = () => { if (document.visibilityState === "visible" && logado && !aberta) carregar(); };
+    if (!logado) return;
+    const f = () => { if (document.visibilityState === "visible" && !aberta) carregar(); };
     document.addEventListener("visibilitychange", f);
-    return () => document.removeEventListener("visibilitychange", f);
+    const t = setInterval(f, RECARREGAR_MIN * 60000);
+    return () => { document.removeEventListener("visibilitychange", f); clearInterval(t); };
   }, [logado, aberta, carregar]);
 
   // ---------- avisos ----------
@@ -105,6 +123,7 @@ export default function App() {
   const paraAvaliar = paraAvaliarTodas.filter((i) => i.vaga.match_recomendacao !== "eliminado");
   const nEliminadas = paraAvaliarTodas.length - paraAvaliar.length;
   const contagem = {
+    visao: null,
     avaliar: paraAvaliar.length,
     candidaturas: itens.filter(ABAS.candidaturas).length,
     arquivo: itens.filter(ABAS.arquivo).length,
@@ -143,25 +162,40 @@ export default function App() {
       <header className="band">
         <div className="wrap">
           <div className="top">
-            <h1>Busca de vagas</h1>
+            <div className="brand"><Marca /><h1>Busca de vagas</h1></div>
             <div className="who">
-              <span>{sessao.user.email}</span>
-              <button className="btn sm" type="button" onClick={carregar}>Atualizar</button>
-              <button className="btn sm" type="button" onClick={() => sb.auth.signOut()}>Sair</button>
+              <span className={"live" + (carregando ? " on" : "")} title={`Atualiza sozinho a cada ${RECARREGAR_MIN} minutos`}>
+                <i /><span>{carregando ? "Atualizando…" : atualizadoEm ? "Atualizado às " + atualizadoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) : ""}</span>
+              </span>
+              <div className="menu">
+                <button className="avatar" type="button" aria-label="Conta" aria-expanded={menu} onClick={() => setMenu(!menu)}>
+                  {(sessao.user.email || "?")[0].toUpperCase()}
+                </button>
+                {menu && (
+                  <div className="menu-pop">
+                    <p>{sessao.user.email}</p>
+                    <button className="btn ghost" type="button" onClick={() => { setMenu(false); sb.auth.signOut(); }}>Sair</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <Resumo itens={itens} ultima={ultima} paraAvaliar={paraAvaliar} />
           <nav className="tabs" role="tablist">
             {ROTULO_ABAS.map(([k, rotulo]) => (
               <button key={k} className="tab" role="tab" type="button" aria-selected={aba === k} onClick={() => escolherAba(k)}>
-                {rotulo}<i>{contagem[k]}</i>
+                {rotulo}{contagem[k] != null && <i>{contagem[k]}</i>}
               </button>
             ))}
           </nav>
         </div>
       </header>
 
-      <main className="wrap">
+      <main className="wrap" onClick={() => menu && setMenu(false)}>
+        {aba === "visao" ? (
+          erro ? <p className="empty" style={{ marginTop: 16 }}>Erro ao carregar: {erro}</p>
+          : <VisaoGeral itens={itens} onAbrir={setAberta} />
+        ) : (<>
         <div className="bar">
           <input type="search" placeholder="Buscar por cargo ou empresa" aria-label="Buscar" value={busca} onChange={(e) => setBusca(e.target.value)} />
           {aba === "avaliar" && (
@@ -186,7 +220,7 @@ export default function App() {
           )}
         </div>
 
-        <div aria-live="polite">
+        <div className="lista" aria-live="polite">
           {erro && <p className="empty">Erro ao carregar: {erro}</p>}
           {!erro && carregando && !itens.length && <p className="empty">Carregando…</p>}
           {!erro && !carregando && !visiveis.length && <p className="empty">{vazio}</p>}
@@ -195,7 +229,7 @@ export default function App() {
                 const grupo = visiveis.filter((i) => i.status === s);
                 if (!grupo.length) return null;
                 return (
-                  <div key={s}>
+                  <div key={s} style={{ display: "grid", gap: 10 }}>
                     <h3 className="group"><b>{STATUS[s]}</b>{grupo.length}</h3>
                     {grupo.map(linha)}
                   </div>
@@ -203,6 +237,7 @@ export default function App() {
               })
             : visiveis.map(linha)}
         </div>
+        </>)}
       </main>
 
       {itemAberto && (

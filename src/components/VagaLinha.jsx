@@ -1,9 +1,12 @@
-import { PIPE, REC, STATUS, encerrada } from "../config.js";
-import { corNota, fData, fLocal, fRel, fSal } from "../format.js";
+import { COR_REC, PIPE, REC, STATUS, encerrada } from "../config.js";
+import { fData, fLocal, fModalidade, fRel, fSal } from "../format.js";
+import { Anel } from "./graficos.jsx";
 
 export function Recomendacao({ valor }) {
   if (!valor) return null;
-  return <span className={"rec " + valor}>{REC[valor] || valor}</span>;
+  return (
+    <span className="rec"><i style={{ background: COR_REC[valor] }} />{REC[valor] || valor}</span>
+  );
 }
 
 export default function VagaLinha({ it, onMudar, onAbrir }) {
@@ -28,11 +31,9 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
   else if (PIPE.includes(it.status))
     acoes = (
       <select aria-label="Situação" value={it.status} onChange={(e) => onMudar(it, e.target.value)}>
-        {Object.keys(STATUS)
-          .filter((s) => s !== "nova")
-          .map((s) => (
-            <option key={s} value={s}>{STATUS[s]}</option>
-          ))}
+        {Object.keys(STATUS).filter((s) => s !== "nova").map((s) => (
+          <option key={s} value={s}>{STATUS[s]}</option>
+        ))}
       </select>
     );
   else if (it.status !== "nova")
@@ -40,18 +41,18 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
 
   return (
     <article className="row">
-      <div className={"score " + corNota(v)} title="Nota de match">{v.nota_match ?? "–"}</div>
+      <Anel nota={v.nota_match} cor={COR_REC[v.match_recomendacao] || "var(--faint)"} />
       <div>
         <button className="ttl" type="button" onClick={() => onAbrir(it)}>{v.titulo}</button>
-        <div className="co"><Recomendacao valor={v.match_recomendacao} />{v.empresa}</div>
-        <div className="meta">
-          <span>{fLocal(v)}</span>
-          {v.modalidade && <span>{v.modalidade}</span>}
-          <span>{fSal(v)}</span>
-          <span>Publicada {fRel(v.publicado_em)}</span>
-          {fechada && <span className="tag">Encerrada {fData(v.encerrada_detectada_em)}</span>}
-          {v.prazo_inscricao && <span>Prazo {fData(v.prazo_inscricao)}</span>}
-          {it.data_inscricao && <span>Inscrita em {fData(it.data_inscricao)}</span>}
+        <div className="co"><Recomendacao valor={v.match_recomendacao} /><span>{v.empresa}</span></div>
+        <div className="pills">
+          <span className="pill">{fLocal(v)}</span>
+          {v.modalidade && <span className="pill">{fModalidade(v.modalidade)}</span>}
+          <span className="pill">{fSal(v)}</span>
+          <span className="pill">Publicada {fRel(v.publicado_em)}</span>
+          {fechada && <span className="pill alert">Encerrada {fData(v.encerrada_detectada_em)}</span>}
+          {v.prazo_inscricao && <span className="pill">Prazo {fData(v.prazo_inscricao)}</span>}
+          {it.data_inscricao && <span className="pill">Inscrita em {fData(it.data_inscricao)}</span>}
         </div>
         {v.match_eliminatorio ? (
           <div className="elim">{v.match_eliminatorio}</div>
