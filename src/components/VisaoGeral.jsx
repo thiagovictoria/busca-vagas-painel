@@ -3,8 +3,8 @@ import { fLocal, fModalidade } from "../format.js";
 import { Anel, Barras, Colunas, Legenda, Rosca } from "./graficos.jsx";
 import { dataVista, montarPeriodo, nomePeriodo } from "../periodo.js";
 
-// itens ja chegam filtrados pelo periodo escolhido no topo da Visao geral
-export default function VisaoGeral({ itens, periodo, onAbrir }) {
+// itens ja chegam filtrados pelo periodo; o seletor fica no cartao do grafico e vale para toda a Visao geral
+export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir }) {
 
   // --- vagas encontradas no periodo ---
   const { cats, indice, titulo } = montarPeriodo(periodo);
@@ -46,7 +46,16 @@ export default function VisaoGeral({ itens, periodo, onAbrir }) {
   return (
     <div className="grid">
       <section className="panel w8">
-        <h3>Vagas encontradas {titulo}</h3>
+        <div className="phead">
+          <h3>Vagas encontradas {titulo}</h3>
+          <label className="pctl">Período
+            <select value={periodo} onChange={(e) => onPeriodo(e.target.value)}>
+              <option value="7">Últimos 7 dias</option>
+              <option value="30">Últimos 30 dias</option>
+              {anos.map((a) => <option key={a} value={String(a)}>{a}</option>)}
+            </select>
+          </label>
+        </div>
         <Legenda series={series} />
         <Colunas categorias={cats} series={series} />
         <details className="tabela">

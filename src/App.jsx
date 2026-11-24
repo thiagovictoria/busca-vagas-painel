@@ -193,23 +193,13 @@ export default function App() {
           </div>
         </div>
       </header>
-      {aba === "visao" && (
-        <div className="wrap periodo">
-          <label>Período
-            <select value={periodo} onChange={(e) => { setPeriodo(e.target.value); guardar.set("periodo", e.target.value); }}>
-              <option value="7">Últimos 7 dias</option>
-              <option value="30">Últimos 30 dias</option>
-              {anos.map((a) => <option key={a} value={String(a)}>{a}</option>)}
-            </select>
-          </label>
-        </div>
-      )}
       <Resumo itens={aba === "visao" ? itensPeriodo : itens} />
 
       <main className="wrap" onClick={() => menu && setMenu(false)}>
         {aba === "visao" ? (
           erro ? <p className="empty" style={{ marginTop: 16 }}>Erro ao carregar: {erro}</p>
-          : <VisaoGeral itens={itensPeriodo} periodo={periodo} onAbrir={setAberta} />
+          : <VisaoGeral itens={itensPeriodo} periodo={periodo} anos={anos}
+            onPeriodo={(p) => { setPeriodo(p); guardar.set("periodo", p); }} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
           <div className="bar-top">

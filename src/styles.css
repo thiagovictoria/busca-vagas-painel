@@ -139,7 +139,7 @@ textarea{min-height:96px;resize:vertical;width:100%}
 .panel h4~h4{margin-top:22px}
 .phead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
 .phead h3{margin:0}
-.pctl{display:flex;gap:8px;flex-wrap:wrap}
+.pctl{display:flex;align-items:center;gap:10px;font-size:14px}
 .pctl select{min-height:36px;font-size:14px;padding:4px 10px}
 .panel .sub{margin:2px 0 14px;font-size:13px;color:var(--mute)}
 .fig{position:relative;height:240px}
