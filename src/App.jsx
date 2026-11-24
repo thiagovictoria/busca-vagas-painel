@@ -7,7 +7,7 @@ import VagaLinha from "./components/VagaLinha.jsx";
 import Detalhe from "./components/Detalhe.jsx";
 import Aviso from "./components/Aviso.jsx";
 import VisaoGeral from "./components/VisaoGeral.jsx";
-import { anosDasVagas, noPeriodo } from "./periodo.js";
+import { anosDasVagas, aplicarSelecao, noPeriodo, semSelecao } from "./periodo.js";
 
 const ORDENS = {
   nota: (x, y) => (y.vaga.nota_match ?? -1) - (x.vaga.nota_match ?? -1) || ms(y.vaga.publicado_em) - ms(x.vaga.publicado_em),
@@ -38,6 +38,7 @@ export default function App() {
   const [aba, setAba] = useState(() => { const t = guardar.get("tab", "visao"); return ROTULO_ABAS.some(([k]) => k === t) ? t : "vagas"; });
   const [sit, setSit] = useState("avaliar");
   const [periodo, setPeriodo] = useState(guardar.get("periodo", "7"));
+  const [selVisao, setSelVisao] = useState(semSelecao);
   const [loc, setLoc] = useState("todas");
   const [mod, setMod] = useState("todos");
   const [atualizadoEm, setAtualizadoEm] = useState(null);
@@ -131,6 +132,7 @@ export default function App() {
   }, [itens]);
   const anos = useMemo(() => anosDasVagas(itens), [itens]);
   const itensPeriodo = useMemo(() => noPeriodo(itens, periodo), [itens, periodo]);
+  const itensVisao = useMemo(() => aplicarSelecao(itensPeriodo, periodo, selVisao), [itensPeriodo, periodo, selVisao]);
   const localidades = useMemo(() => unicos(itens.map((i) => fLocal(i.vaga))), [itens]);
   const modelos = useMemo(() => unicos(itens.map((i) => fModalidade(i.vaga.modalidade) || "Não informado")), [itens]);
 
@@ -193,13 +195,15 @@ export default function App() {
           </div>
         </div>
       </header>
-      {aba !== "visao" && <Resumo itens={itens} />}
+      {/* numeros sempre no mesmo lugar; na Visao geral seguem o periodo e os filtros dos graficos */}
+      <Resumo itens={aba === "visao" ? itensVisao : itens} />
 
       <main className="wrap" onClick={() => menu && setMenu(false)}>
         {aba === "visao" ? (
           erro ? <p className="empty" style={{ marginTop: 16 }}>Erro ao carregar: {erro}</p>
           : <VisaoGeral itens={itensPeriodo} periodo={periodo} anos={anos}
-            onPeriodo={(p) => { setPeriodo(p); guardar.set("periodo", p); }} onAbrir={setAberta} />
+            sel={selVisao} setSel={setSelVisao}
+            onPeriodo={(p) => { setPeriodo(p); guardar.set("periodo", p); setSelVisao((s) => ({ ...s, tempo: null })); }} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
           <div className="bar-top">

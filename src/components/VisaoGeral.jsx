@@ -1,35 +1,19 @@
-import { useEffect, useState } from "react";
 import { COR_REC, REC, SERIES_REC, SITUACOES } from "../config.js";
-import { fLocal, fModalidade } from "../format.js";
 import { Anel, Barras, Colunas, Legenda, Rosca } from "./graficos.jsx";
-import { dataVista, montarPeriodo, nomePeriodo } from "../periodo.js";
-import Resumo from "./Resumo.jsx";
+import { aplicarSelecao, dataVista, dimensoes, faixaNota, montarPeriodo, nomePeriodo, semSelecao } from "../periodo.js";
 
 const MODELOS = ["Presencial", "Híbrido", "Remoto"];
-const faixaNota = (n) => (n == null ? null : Math.min(9, Math.floor(n / 10)));
-const semSelecao = () => ({ rec: null, tempo: null, nota: null, modelo: null, local: null });
 
 /**
  * Visao geral com filtro cruzado: clicar numa coluna, fatia ou barra filtra os outros graficos e os numeros.
  * Cada grafico usa os filtros dos OUTROS graficos (o seu proprio item fica destacado).
  * itens ja chegam filtrados pelo periodo.
  */
-export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir }) {
-  const [sel, setSel] = useState(semSelecao);
-  // trocar o periodo limpa o dia/mes escolhido
-  useEffect(() => setSel((s) => ({ ...s, tempo: null })), [periodo]);
-
+// sel/setSel (filtros escolhidos) ficam no App, que usa os mesmos filtros nos numeros do topo
+export default function VisaoGeral({ itens, periodo, anos, onPeriodo, sel, setSel, onAbrir }) {
   const { cats, indice, titulo } = montarPeriodo(periodo);
-  const DIM = {
-    rec: (it) => it.vaga.match_recomendacao || "pular",
-    tempo: (it) => indice(dataVista(it)),
-    nota: (it) => faixaNota(it.vaga.nota_match),
-    modelo: (it) => fModalidade(it.vaga.modalidade) || "Não informado",
-    local: (it) => fLocal(it.vaga),
-  };
-  // vagas que passam em todos os filtros, menos o da dimensao "exceto"
-  const filtrar = (exceto) =>
-    itens.filter((it) => Object.keys(DIM).every((d) => d === exceto || sel[d] === null || DIM[d](it) === sel[d]));
+  const DIM = dimensoes(periodo);
+  const filtrar = (exceto) => aplicarSelecao(itens, periodo, sel, exceto);
   const alternar = (d) => (v) => setSel((s) => ({ ...s, [d]: s[d] === v ? null : v }));
   const todas = filtrar(null);
 
@@ -84,26 +68,23 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
 
   return (
     <>
-      {/* numeros no mesmo lugar das abas Vagas e Candidaturas; filtros ativos logo abaixo */}
-      <Resumo itens={todas} />
-
-      <div className="wrap filtros-ativos" aria-live="polite">
-        {ativos.length ? (
-          <>
-            {ativos.map(([d, txt]) => (
-              <button key={d} type="button" className="chip" aria-pressed="true" onClick={() => setSel((s) => ({ ...s, [d]: null }))}>
-                {txt} <span aria-hidden="true">✕</span>
-              </button>
-            ))}
-            <button type="button" className="btn sm soft" onClick={() => setSel(semSelecao())}>✕ Limpar filtros</button>
-          </>
-        ) : null}
-      </div>
+      {/* filtros ativos: barra flutuante no rodape (nao empurra os graficos) */}
+      {ativos.length > 0 && (
+        <div className="filtros-ativos" role="region" aria-label="Filtros ativos">
+          <span className="rot">Filtros</span>
+          {ativos.map(([d, txt]) => (
+            <button key={d} type="button" className="chip" aria-pressed="true" onClick={() => setSel((s) => ({ ...s, [d]: null }))}>
+              {txt} <span aria-hidden="true">✕</span>
+            </button>
+          ))}
+          <button type="button" className="btn sm soft" onClick={() => setSel(semSelecao())}>Limpar</button>
+        </div>
+      )}
 
 
       <div className="wrap">
         <div className="grid">
-          <section className="panel w8 l1">
+          <section className="panel w9 l1">
             <div className="phead">
               <h3>Vagas encontradas {titulo}</h3>
               <label className="pctl">Período
@@ -135,7 +116,12 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
             </details>
           </section>
 
-          <section className="panel l1">
+          <section className="panel w3 l1">
+            <h3>Vagas encontradas</h3>
+            <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
+          </section>
+
+          <section className="panel w6 l2">
             <h3>Melhores para avaliar</h3>
             <p className="sub">As de maior nota esperando sua decisão.</p>
             {melhores.length ? (
@@ -153,15 +139,10 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
             ) : <p className="foot">Nada esperando avaliação com esses filtros.</p>}
           </section>
 
-          <section className="panel l2">
+          <section className="panel w3 l2">
             <h3>Distribuição das notas</h3>
             <Colunas categorias={faixas} series={[{ k: "n", nome: "Vagas", cor: "var(--primary)" }]}
               selecionado={sel.nota} onSelecionar={alternar("nota")} />
-          </section>
-
-          <section className="panel l2">
-            <h3>Vagas encontradas</h3>
-            <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} selecionado={sel.rec} onSelecionar={alternar("rec")} />
           </section>
 
           {/* dois cartoes, um abaixo do outro, na mesma coluna */}

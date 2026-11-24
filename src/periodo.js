@@ -1,3 +1,5 @@
+import { fLocal, fModalidade } from "./format.js";
+
 // Periodo da Visao geral: ultimos 7 ou 30 dias, ou um ano inteiro (por mes)
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 const SEMANA = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
@@ -46,4 +48,26 @@ export const anosDasVagas = (itens) => [...new Set(itens.map((i) => dataVista(i)
 export function noPeriodo(itens, periodo) {
   const { indice } = montarPeriodo(periodo);
   return itens.filter((i) => indice(dataVista(i)) >= 0);
+}
+
+// ---------- filtro cruzado da Visao geral ----------
+export const faixaNota = (n) => (n == null ? null : Math.min(9, Math.floor(n / 10)));
+export const semSelecao = () => ({ rec: null, tempo: null, nota: null, modelo: null, local: null });
+
+// as 5 dimensoes que os graficos podem filtrar
+export function dimensoes(periodo) {
+  const { indice } = montarPeriodo(periodo);
+  return {
+    rec: (it) => it.vaga.match_recomendacao || "pular",
+    tempo: (it) => indice(dataVista(it)),
+    nota: (it) => faixaNota(it.vaga.nota_match),
+    modelo: (it) => fModalidade(it.vaga.modalidade) || "Não informado",
+    local: (it) => fLocal(it.vaga),
+  };
+}
+
+// vagas que passam em todos os filtros escolhidos, menos o da dimensao "exceto"
+export function aplicarSelecao(itens, periodo, sel, exceto = null) {
+  const DIM = dimensoes(periodo);
+  return itens.filter((it) => Object.keys(DIM).every((d) => d === exceto || sel[d] === null || DIM[d](it) === sel[d]));
 }

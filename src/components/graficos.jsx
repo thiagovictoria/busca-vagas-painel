@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 // Largura real do elemento (os graficos sao desenhados no tamanho em pixels de verdade)
 function useTamanho() {
   const ref = useRef(null);
   const [t, setT] = useState({ w: 0, h: 0 });
-  useEffect(() => {
+  // medir antes de pintar a tela: o grafico ja aparece desenhado, sem piscar
+  useLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
     const medir = () => setT({ w: el.clientWidth, h: el.clientHeight });
