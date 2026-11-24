@@ -92,8 +92,8 @@ export default function VisaoGeral({ itens, periodo, onAbrir }) {
       </section>
 
       <section className="panel">
-        <h3>Vagas por recomendação da IA</h3>
-        <Rosca fatias={fatias} rotuloTotal={`vagas · ${nomePeriodo(periodo)}`} />
+        <h3>Vagas encontradas</h3>
+        <Rosca fatias={fatias} rotuloTotal={nomePeriodo(periodo)} />
       </section>
 
       <section className="panel">
