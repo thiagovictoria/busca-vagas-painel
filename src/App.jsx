@@ -128,11 +128,6 @@ export default function App() {
     return r;
   }, [itens]);
   const paraAvaliar = porSit.avaliar || [];
-  const contagem = {
-    visao: null,
-    vagas: itens.filter(ABAS.vagas).length,
-    candidaturas: itens.filter(ABAS.candidaturas).length,
-  };
   const localidades = useMemo(() => unicos(itens.map((i) => fLocal(i.vaga))), [itens]);
   const modelos = useMemo(() => unicos(itens.map((i) => fModalidade(i.vaga.modalidade) || "Não informado")), [itens]);
 
@@ -172,7 +167,7 @@ export default function App() {
           <nav className="tabs" role="tablist">
             {ROTULO_ABAS.map(([k, rotulo]) => (
               <button key={k} className="tab" role="tab" type="button" aria-selected={aba === k} onClick={() => escolherAba(k)}>
-                {rotulo}{contagem[k] != null && <i>{contagem[k]}</i>}
+                {rotulo}
               </button>
             ))}
           </nav>

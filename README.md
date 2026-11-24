@@ -23,7 +23,7 @@ busca-vagas-painel/
     ├── styles.css                 visual
     └── components/
         ├── Login.jsx              tela de entrada
-        ├── Resumo.jsx             os 4 números da faixa verde
+        ├── Resumo.jsx             os 3 números do topo
         ├── VisaoGeral.jsx         aba de gráficos (vagas por dia, notas, andamento, modelo, localidades)
         ├── graficos.jsx           colunas, barras e anel de nota (SVG/HTML, sem biblioteca)
         ├── VagaLinha.jsx          uma vaga da lista + botões

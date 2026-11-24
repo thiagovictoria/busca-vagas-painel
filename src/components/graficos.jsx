@@ -48,7 +48,8 @@ export function Legenda({ series }) {
 export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
   const [ref, W, Hmedida] = useTamanho();
   const [foco, setFoco] = useState(null);
-  const H = altura || Hmedida || 240, esq = 30, base = 26, topo = 18;
+  const temGrupo = categorias.some((c) => c.grupo);
+  const H = altura || Hmedida || 240, esq = 4, base = temGrupo ? 44 : 26, topo = 18;
   const n = categorias.length;
   const totais = categorias.map((c) => series.reduce((s, x) => s + (c.valores[x.k] || 0), 0));
   const max = teto(Math.max(1, ...totais));
@@ -56,7 +57,7 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
   const banda = n ? (W - esq) / n : 0;
   const larg = Math.max(4, Math.min(24, banda * 0.62));
   const y = (v) => topo + ih - (v / max) * ih;
-  const passoRotulo = Math.max(1, Math.ceil(44 / Math.max(banda, 1)));
+  const passoRotulo = Math.max(1, Math.ceil(36 / Math.max(banda, 1)));
   const ticks = [0, max / 2, max];
 
   return (
@@ -66,7 +67,6 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
           {ticks.map((t) => (
             <g key={t}>
               <line x1={esq} x2={W} y1={y(t)} y2={y(t)} stroke="var(--grid)" strokeWidth="1" />
-              <text x={esq - 8} y={y(t) + 4} textAnchor="end">{t}</text>
             </g>
           ))}
           {categorias.map((c, i) => {
@@ -86,8 +86,14 @@ export function Colunas({ categorias, series, altura, unidade = "vagas" }) {
                     ? <path key={s.k} d={colunaPath(x, y1, larg, h, 4)} fill={s.cor} />
                     : <rect key={s.k} x={x} y={y1} width={larg} height={h} fill={s.cor} />;
                 })}
-                {totais[i] > 0 && <text className="cap" x={cx} y={y(totais[i]) - 6} textAnchor="middle">{totais[i]}</text>}
-                {i % passoRotulo === 0 && <text x={cx} y={H - 6} textAnchor="middle">{c.rotulo}</text>}
+                {totais[i] > 0 && banda >= 16 && <text className="cap" x={cx} y={y(totais[i]) - 6} textAnchor="middle">{totais[i]}</text>}
+                {i % passoRotulo === 0 && <text x={cx} y={temGrupo ? H - 24 : H - 6} textAnchor="middle">{c.rotulo}</text>}
+                {c.grupo && (i === 0 || c.grupo !== categorias[i - 1].grupo) && (
+                  <g>
+                    <line x1={esq + banda * i + 1} x2={esq + banda * i + 1} y1={y(0)} y2={H - 2} stroke="var(--line)" />
+                    <text className="cap" x={esq + banda * i + 6} y={H - 4}>{c.grupo}</text>
+                  </g>
+                )}
                 <rect x={esq + banda * i} y={0} width={banda} height={H} fill="transparent"
                   onMouseEnter={() => setFoco(i)} onTouchStart={() => setFoco(i)} />
               </g>

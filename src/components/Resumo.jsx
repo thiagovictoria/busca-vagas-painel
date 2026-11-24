@@ -23,7 +23,6 @@ export default function Resumo({ itens, porSit }) {
   const paraAvaliar = porSit.avaliar || [];
   const blocos = [
     ["lista", "var(--primary)", paraAvaliar.length, "Para avaliar"],
-    ["estrela", "var(--s1)", paraAvaliar.filter((i) => i.vaga.match_recomendacao === "candidatar").length, "Recomendadas pela IA"],
     ["check", "var(--s3)", itens.filter((i) => (ETAPA[i.status] ?? 0) >= 2).length, "Inscrições feitas"],
     ["conversa", "var(--s2)", itens.filter((i) => ["em_analise", "case", "entrevista", "proposta"].includes(i.status)).length, "Em processo seletivo"],
   ];
