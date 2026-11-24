@@ -84,6 +84,9 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
 
   return (
     <>
+      {/* numeros no mesmo lugar das abas Vagas e Candidaturas; filtros ativos logo abaixo */}
+      <Resumo itens={todas} />
+
       <div className="wrap filtros-ativos" aria-live="polite">
         {ativos.length ? (
           <>
@@ -97,7 +100,6 @@ export default function VisaoGeral({ itens, periodo, anos, onPeriodo, onAbrir })
         ) : null}
       </div>
 
-      <Resumo itens={todas} />
 
       <div className="wrap">
         <div className="grid">
