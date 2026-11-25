@@ -56,6 +56,10 @@ Definido no topo de `src/styles.css` (tokens em CSS, claro e escuro):
 
 Raio 12px nos cartões e 10px nos controles; fontes Manrope (títulos e números) e Inter (texto), empacotadas no site.
 
+## Cena animada da entrada
+
+`src/components/Garimpeiro.jsx` é gerado por `scripts/gerar_garimpeiro.py`: o script define as poses do garimpeiro (posição de cabeça, ombros, cotovelos, mãos, quadril, joelhos, pés, bateia e pepita) e a linha do tempo, e escreve a animação em SVG/SMIL. Para mudar o movimento, edite as poses no script e rode `python3 scripts/gerar_garimpeiro.py`.
+
 ## Rodar no seu PC (opcional)
 
 ```
