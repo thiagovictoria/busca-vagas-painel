@@ -6,7 +6,6 @@ const ICONES = {
   lista: <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />,
   estrela: <path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" />,
   check: <path d="M4 12.5l5 5L20 6.5" />,
-  conversa: <path d="M4 5h16v11H9l-5 4z" />,
 };
 
 function Icone({ nome, cor }) {
@@ -27,7 +26,6 @@ export default function Resumo({ itens }) {
     ["lupa", "var(--mute)", itens.length, "Vagas encontradas"],
     ["lista", "var(--ouro-text)", paraAvaliar.length, "Para avaliar"],
     ["check", "var(--primary-text)", itens.filter((i) => (ETAPA[i.status] ?? 0) >= 2).length, "Inscrições feitas"],
-    ["conversa", "var(--s3)", itens.filter((i) => ["em_analise", "case", "entrevista", "proposta"].includes(i.status)).length, "Em processo seletivo"],
   ];
   return (
     <section className="wrap kpis" aria-label="Resumo">

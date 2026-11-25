@@ -7,7 +7,7 @@ const SB_KEY = "sb_publishable_RabLRPw9lUqaIc8QmcJVbA_5oXXYEHj";
 export const sb = createClient(SB_URL, SB_KEY);
 
 export const STATUS = {
-  nova: "Nova",
+  nova: "Para avaliar",
   aprovada: "Quero me inscrever",
   inscrita: "Inscrito",
   em_analise: "Em análise",
@@ -16,15 +16,21 @@ export const STATUS = {
   proposta: "Proposta",
   contratado: "Contratado",
   descartada: "Descartada",
-  reprovado: "Reprovado",
+  reprovado: "Não avançou",
   sem_retorno: "Sem retorno",
 };
 export const PIPE = ["aprovada", "inscrita", "em_analise", "case", "entrevista", "proposta", "contratado"];
 export const EM_PROCESSO = ["inscrita", "em_analise", "case", "entrevista", "proposta"];
 export const FIM = ["descartada", "reprovado", "sem_retorno"];
 export const GRUPOS_CAND = [...PIPE, "reprovado", "sem_retorno"];
-// "aprovada" (quero me inscrever) fica guardada para a fase de inscricao automatica; nao aparece nas escolhas
-export const ESCOLHAS_STATUS = Object.keys(STATUS).filter((s) => s !== "aprovada");
+// Etapas do kanban de candidaturas (poucas, de proposito). Situacoes antigas caem na etapa equivalente.
+export const ETAPAS_KANBAN = ["em_analise", "entrevista", "proposta", "contratado", "reprovado"];
+export const NOME_ETAPA = { em_analise: "Em análise", entrevista: "Entrevista", proposta: "Proposta", contratado: "Contratado", reprovado: "Não avançou" };
+export const colunaKanban = (status) =>
+  ({ aprovada: "em_analise", inscrita: "em_analise", em_analise: "em_analise", case: "entrevista", entrevista: "entrevista",
+     proposta: "proposta", contratado: "contratado", reprovado: "reprovado", sem_retorno: "reprovado" })[status] || null;
+// escolhas no detalhe da vaga: voltar para avaliar, as etapas do kanban ou descartar
+export const ESCOLHAS_STATUS = ["nova", ...ETAPAS_KANBAN, "descartada"];
 // ate que etapa cada situacao chegou (reprovado e sem retorno: ao menos inscrito)
 export const ETAPA = { nova: 0, descartada: 0, aprovada: 1, inscrita: 2, reprovado: 2, sem_retorno: 2, em_analise: 3, case: 4, entrevista: 4, proposta: 5, contratado: 6 };
 export const REC = { candidatar: "Candidatar", avaliar: "Avaliar", pular: "Pular", eliminado: "Eliminado" };

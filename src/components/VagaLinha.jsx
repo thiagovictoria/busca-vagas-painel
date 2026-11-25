@@ -20,7 +20,7 @@ export default function VagaLinha({ it, onMudar, onAbrir }) {
   if ((it.status === "nova" && !fechada) || it.status === "aprovada")
     acoes = (
       <>
-        <button className="btn sm inscrever" onClick={() => onMudar(it, "inscrita")} title="Clique depois de se candidatar na Gupy">
+        <button className="btn sm inscrever" onClick={() => onMudar(it, "em_analise")} title="Clique depois de se candidatar na Gupy: a vaga vai para Candidaturas, em análise">
           <span className="a">Inscrever</span><span className="b">✓ Inscrito</span>
         </button>
         <button className="btn sm warn" onClick={() => onMudar(it, "descartada")}>Descartar</button>

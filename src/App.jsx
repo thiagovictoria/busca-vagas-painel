@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ABAS, CAND_COLS, GRUPOS_CAND, LISTA_COLS, REC, SITUACOES, STATUS, sb } from "./config.js";
+import { ABAS, CAND_COLS, LISTA_COLS, REC, SITUACOES, STATUS, sb } from "./config.js";
+import Kanban from "./components/Kanban.jsx";
 import { fLocal, fModalidade, guardar, ms } from "./format.js";
 import Login from "./components/Login.jsx";
 import Resumo from "./components/Resumo.jsx";
@@ -100,7 +101,8 @@ export default function App() {
   async function mudar(it, novo, extra = {}, silencioso = false) {
     const antes = { status: it.status, data_inscricao: it.data_inscricao, inscrito_por: it.inscrito_por, observacoes: it.observacoes, etapa: it.etapa };
     const patch = { ...extra, status: novo };
-    if (novo === "inscrita" && !it.data_inscricao && !("data_inscricao" in extra)) {
+    // marcou "Inscrito": ja entra em "Em analise" e guarda a data da inscricao
+    if (["inscrita", "em_analise"].includes(novo) && !it.data_inscricao && !("data_inscricao" in extra)) {
       patch.data_inscricao = new Date().toISOString();
       patch.inscrito_por = it.inscrito_por || "voce";
     }
@@ -196,7 +198,7 @@ export default function App() {
             onPeriodo={(p) => { setPeriodo(p); guardar.set("periodo", p); setSelVisao((s) => ({ ...s, tempo: null })); }} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
-          <div className="bar-top">
+          {(aba === "vagas" || filtrando) && <div className="bar-top">
             {aba === "vagas" ? (
               <div className="chips" role="group" aria-label="Situação">
                 {Object.entries(SITUACOES).map(([k, x]) => (
@@ -207,17 +209,17 @@ export default function App() {
               </div>
             ) : <span />}
             {filtrando && <button className="btn sm soft" type="button" onClick={limpar}>✕ Limpar filtros</button>}
-          </div>
-          <div className="filtros">
+          </div>}
+          <div className={"filtros" + (aba === "candidaturas" ? " f3" : "")}>
             <label className="busca">Buscar
               <input type="search" placeholder="Cargo ou empresa" value={busca} onChange={(e) => setBusca(e.target.value)} />
             </label>
-            <label>Recomendação
-              <select value={rec} onChange={(e) => escolherRec(e.target.value)} disabled={aba !== "vagas"}>
+            {aba === "vagas" && <label>Recomendação
+              <select value={rec} onChange={(e) => escolherRec(e.target.value)}>
                 <option value="todas">Todas</option>
                 {Object.entries(REC).filter(([k]) => k !== "eliminado").map(([k, n]) => <option key={k} value={k}>{n}</option>)}
               </select>
-            </label>
+            </label>}
             <label>Localidade
               <select value={loc} onChange={(e) => setLoc(e.target.value)}>
                 <option value="todas">Todas</option>
@@ -230,13 +232,13 @@ export default function App() {
                 {modelos.map((m) => <option key={m} value={m}>{m}</option>)}
               </select>
             </label>
-            <label>Ordenar por
+            {aba === "vagas" && <label>Ordenar por
               <select value={ordem} onChange={(e) => escolherOrdem(e.target.value)}>
                 <option value="nota">Maior nota</option>
                 <option value="data">Mais recentes</option>
                 <option value="prazo">Prazo mais próximo</option>
               </select>
-            </label>
+            </label>}
           </div>
         </div>
 
@@ -244,17 +246,8 @@ export default function App() {
           {erro && <p className="empty">Erro ao carregar: {erro}</p>}
           {!erro && carregando && !itens.length && <p className="empty">Carregando…</p>}
           {!erro && !carregando && !visiveis.length && <p className="empty">{vazio}</p>}
-          {aba === "candidaturas"
-            ? GRUPOS_CAND.map((s) => {
-                const grupo = visiveis.filter((i) => i.status === s);
-                if (!grupo.length) return null;
-                return (
-                  <div key={s} style={{ display: "grid", gap: 10 }}>
-                    <h3 className="group"><b>{STATUS[s]}</b>{grupo.length}</h3>
-                    {grupo.map(linha)}
-                  </div>
-                );
-              })
+          {aba === "candidaturas" && visiveis.length > 0
+            ? <Kanban itens={visiveis} onMudar={mudar} onAbrir={setAberta} />
             : visiveis.map(linha)}
         </div>
         </>)}
