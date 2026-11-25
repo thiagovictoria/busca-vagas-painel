@@ -1,6 +1,6 @@
 /* VOICE: painel pessoal, calmo e confiante — "garimpar" as vagas que combinam com você.
    IDEA: garimpo de rio na mata: estrutura em verde-mata, superfícies cor de areia clara e o ouro só onde há achado.
-   PICTURE: na entrada, a bateia (círculos na água) com a pepita no centro; no painel, os anéis de nota.
+   PICTURE: na entrada, um garimpeiro animado acha a pepita e pula de alegria; no painel, os anéis de nota.
    COLOUR and TYPE: mata + areia + ouro (ouro como acento: 5–15% da tela); Manrope (títulos e números) + Inter (texto).
    LAYOUT: barra superior verde-mata com abas, 4 números, cartões; detalhe em painel lateral.
 
@@ -64,24 +64,39 @@ textarea{min-height:96px;resize:vertical;width:100%}
 .login-art h1{font-size:clamp(36px,4.8vw,54px);line-height:1;color:var(--areia)}
 .login-art p{color:var(--areia);margin:18px 0 0;font:500 clamp(20px,2.4vw,26px)/1.3 Manrope,sans-serif;letter-spacing:-.02em;max-width:22ch}
 .login-art p b{color:var(--ouro);font-weight:700}
-.login-art svg.bateia{width:min(100%,440px);height:auto;align-self:center}
-/* bateia em movimento (giro lento da agua, brilho da pepita) */
-.bateia .gira,.bateia .gira-volta,.bateia .gira-lento{transform-box:view-box;transform-origin:0 0}
-.bateia .aura{opacity:.12;transform-box:view-box;transform-origin:0 0}
-.bateia .flutua{transform-box:view-box;transform-origin:0 0}
-.bateia .brilho{transform-box:fill-box;transform-origin:center}
+/* garimpeiro animado — ciclo de 9s:
+   0–36% peneira | 34–45% brilho na bateia | 45–52% levanta a pepita | 54–72% pula duas vezes | 86–92% volta */
+.login-art svg.garimpeiro{width:min(100%,460px);height:auto;align-self:center}
+.garimpeiro *{transform-box:view-box}
+.garimpeiro .g-balanco{transform-origin:200px 206px}
+.garimpeiro .g-braco{transform-origin:221px 148px}
+.garimpeiro .g-pulo{transform-origin:200px 260px}
+.garimpeiro .g-achado,.garimpeiro .g-na-mao,.garimpeiro .g-festa,.garimpeiro .g-boca-feliz,.garimpeiro .g-respingo{opacity:0}
+.garimpeiro .g-cintila{transform-box:fill-box;transform-origin:center}
 @media(prefers-reduced-motion:no-preference){
-  .bateia .gira{animation:giro 60s linear infinite}
-  .bateia .gira-volta{animation:giro 90s linear infinite reverse}
-  .bateia .gira-lento{animation:giro 140s linear infinite}
-  .bateia .aura{animation:aura 4s ease-in-out infinite}
-  .bateia .flutua{animation:flutua 6s ease-in-out infinite}
-  .bateia .brilho{animation:brilho 3s ease-in-out infinite}
+  .garimpeiro .g-balanco{animation:g-balanco 9s ease-in-out infinite}
+  .garimpeiro .g-achado{animation:g-achado 9s linear infinite}
+  .garimpeiro .g-cintila{animation:g-cintila .6s ease-in-out infinite alternate}
+  .garimpeiro .g-braco{animation:g-braco 9s ease-in-out infinite}
+  .garimpeiro .g-na-mao{animation:g-na-mao 9s linear infinite}
+  .garimpeiro .g-pulo{animation:g-pulo 9s ease-in-out infinite}
+  .garimpeiro .g-festa{animation:g-festa 9s ease-out infinite}
+  .garimpeiro .g-boca-feliz{animation:g-feliz 9s linear infinite}
+  .garimpeiro .g-boca-calma{animation:g-calma 9s linear infinite}
+  .garimpeiro .g-respingo{animation:g-respingo 9s ease-out infinite}
+  .garimpeiro .g-ondas{animation:g-ondas 3s ease-in-out infinite alternate}
 }
-@keyframes giro{to{transform:rotate(360deg)}}
-@keyframes aura{0%,100%{opacity:.08;transform:scale(.9)}50%{opacity:.22;transform:scale(1.15)}}
-@keyframes flutua{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-4px) rotate(4deg)}}
-@keyframes brilho{0%,100%{opacity:.2;transform:scale(.6)}40%{opacity:1;transform:scale(1.15)}60%{opacity:1;transform:scale(1)}}
+@keyframes g-balanco{0%,36%,100%{transform:rotate(0)}4%{transform:rotate(-8deg)}10%{transform:rotate(8deg)}16%{transform:rotate(-8deg)}22%{transform:rotate(8deg)}28%{transform:rotate(-6deg)}33%{transform:rotate(3deg)}}
+@keyframes g-achado{0%,33%{opacity:0}36%,44%{opacity:1}46%,100%{opacity:0}}
+@keyframes g-cintila{from{transform:scale(.5);opacity:.4}to{transform:scale(1.2);opacity:1}}
+@keyframes g-braco{0%,44%{transform:rotate(0)}52%,84%{transform:rotate(-150deg)}92%,100%{transform:rotate(0)}}
+@keyframes g-na-mao{0%,45%{opacity:0}46%,86%{opacity:1}88%,100%{opacity:0}}
+@keyframes g-pulo{0%,54%,100%{transform:translateY(0)}58%{transform:translateY(-34px)}62%{transform:translateY(0) scaleY(.96)}66%{transform:translateY(-30px)}70%{transform:translateY(0) scaleY(.97)}72%{transform:translateY(0)}}
+@keyframes g-festa{0%,53%{opacity:0;transform:scale(.6)}57%{opacity:1;transform:scale(1)}78%{opacity:1}84%,100%{opacity:0;transform:scale(1.15)}}
+@keyframes g-feliz{0%,49%{opacity:0}50%,86%{opacity:1}88%,100%{opacity:0}}
+@keyframes g-calma{0%,49%{opacity:1}50%,86%{opacity:0}88%,100%{opacity:1}}
+@keyframes g-respingo{0%,61%{opacity:0;transform:translateY(0)}62%{opacity:1;transform:translateY(0)}66%{opacity:0;transform:translateY(-10px)}69%{opacity:0;transform:translateY(0)}70%{opacity:1}74%,100%{opacity:0;transform:translateY(-10px)}}
+@keyframes g-ondas{from{transform:translateX(-6px)}to{transform:translateX(6px)}}
 .login-form{display:grid;place-items:center;padding:32px 24px}
 .login-form form{width:min(360px,100%);display:grid;gap:16px}
 .login-form h2{font-size:28px;margin-bottom:4px}
@@ -276,7 +291,7 @@ dialog::backdrop{background:rgba(10,14,20,.5)}
 }
 @media(max-width:760px){
   .login{grid-template-columns:minmax(0,1fr)}
-  .login-art{padding:32px 24px}.login-art svg.bateia{max-width:220px}
+  .login-art{padding:32px 24px}.login-art svg.garimpeiro{max-width:260px}
   .topbar-in{flex-wrap:wrap;gap:0 12px;padding-top:10px}
   .brand{flex:1}
   .tabs{order:3;flex-basis:100%}

@@ -1,41 +1,7 @@
 import { useState } from "react";
 import { sb } from "../config.js";
-import { Pepita, Simbolo } from "./Logo.jsx";
-
-// Ilustracao: a bateia vista de cima — circulos na agua, graos de areia e uma pepita no centro (o achado)
-function Arte() {
-  const aneis = [150, 122, 96, 72, 50];
-  // graos de areia espalhados (fixos, para a imagem nao mudar a cada visita)
-  const graos = [
-    [-118, -40, 2.2], [-96, 58, 1.6], [-70, -96, 1.8], [-40, 104, 2.4], [-128, 20, 1.4], [-20, -126, 1.6],
-    [30, 118, 1.8], [62, -104, 2.2], [98, 64, 1.6], [120, -30, 2.4], [132, 18, 1.4], [84, -70, 1.8],
-    [-58, 30, 1.4], [44, 40, 1.6], [-30, -58, 1.8], [52, -36, 1.4], [-84, -62, 1.6], [8, 76, 1.4],
-  ];
-  // movimento: a agua da bateia gira devagar (aneis tracejados e graos de areia em sentidos opostos),
-  // as pepitas pequenas rodam junto e a pepita do centro brilha. Sem movimento se o sistema pedir (reduzir movimento).
-  const perto = graos.filter(([x, y]) => Math.hypot(x, y) < 90);
-  const longe = graos.filter(([x, y]) => Math.hypot(x, y) >= 90);
-  return (
-    <svg viewBox="-170 -170 340 340" aria-hidden="true" className="bateia">
-      <circle r="160" fill="#123a30" />
-      {aneis.map((r, i) => (
-        <circle key={r} r={r} fill="none" stroke="#f3ecdc" strokeOpacity={0.07 + i * 0.03} strokeWidth="1.5"
-          strokeDasharray={i % 2 ? "4 10" : undefined} className={i % 2 ? (i === 1 ? "gira" : "gira-volta") : undefined} />
-      ))}
-      <g className="gira-lento">
-        {longe.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill="#c9bfa8" opacity=".55" />)}
-        <Pepita x={74} y={88} k={0.7} giro={-30} />
-      </g>
-      <g className="gira-volta">
-        {perto.map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} fill="#c9bfa8" opacity=".55" />)}
-        <Pepita x={-92} y={-18} k={0.9} giro={20} />
-      </g>
-      <circle r="34" fill="#e0ac3f" className="aura" />
-      <g className="flutua"><Pepita k={3.1} giro={-10} /></g>
-      <path d="M30-46c.7 4 2.3 5.6 6.3 6.3-4 .7-5.6 2.3-6.3 6.3-.7-4-2.3-5.6-6.3-6.3 4-.7 5.6-2.3 6.3-6.3z" fill="#fff4d6" className="brilho" />
-    </svg>
-  );
-}
+import { Simbolo } from "./Logo.jsx";
+import Garimpeiro from "./Garimpeiro.jsx";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -61,7 +27,7 @@ export default function Login() {
           <h1 className="login-marca" aria-label="garimpo"><Simbolo fundo="#163d33" /><span aria-hidden="true">arimpo</span></h1>
           <p>Encontre as vagas que <b>combinam com você</b>.</p>
         </div>
-        <Arte />
+        <Garimpeiro />
       </section>
       <section className="login-form">
         <form onSubmit={entrar}>
