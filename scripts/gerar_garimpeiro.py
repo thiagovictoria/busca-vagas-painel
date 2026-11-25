@@ -8,7 +8,7 @@ def P(**k): return k
 base = dict(
  head=(400,192), neck=(400,208), shL=(373,214), shR=(427,214), hipL=(385,268), hipR=(415,268),
  kneeL=(373,304), kneeR=(427,304), footL=(381,342), footR=(419,342),
- elL=(354,252), elR=(446,252), haL=(366,292), haR=(434,292), pan=(400,298,0), nug=(410,295), sorriso=0)
+ elL=(352,272), elR=(448,272), haL=(364,322), haR=(436,322), pan=(400,330,0), nug=(410,327), sorriso=0)
 
 def pose(b=None, **mud):
     p=dict(base if b is None else b); p.update(mud); return p
@@ -20,10 +20,10 @@ def mover(p, dy=0, dx=0, chaves=None):
     return q
 
 P0 = pose()
-# peneirando: a bateia vai e volta, os bracos e a cabeca acompanham
-P0a = pose(head=(395,193), haL=(348,288), haR=(418,300), elL=(344,250), elR=(436,256), pan=(384,296,-9), nug=(394,293))
-P0b = pose(head=(405,193), haL=(382,300), haR=(452,288), elL=(364,256), elR=(456,250), pan=(416,296,9), nug=(426,293))
-# achou: ainda curvado, ergue um pouco a bateia e olha de perto
+# peneirando com a bateia dentro d'agua: vai e volta, bracos e cabeca acompanham
+P0a = pose(head=(395,193), haL=(346,318), haR=(418,328), elL=(340,270), elR=(438,276), pan=(384,328,-9), nug=(394,325))
+P0b = pose(head=(405,193), haL=(382,328), haR=(454,318), elL=(362,276), elR=(460,270), pan=(416,328,9), nug=(426,325))
+# achou: puxa a bateia para fora d'agua (com a pepita) e olha de perto, ainda curvado
 P1 = pose(head=(400,188), haL=(368,282), haR=(432,282), elL=(356,246), elR=(444,246), pan=(400,288,0), nug=(410,285))
 P2 = pose(P1, haR=(410,280), elR=(438,252), nug=(410,276))
 # de pe, braco direito no alto com a pepita, bateia baixa na mao esquerda
@@ -143,13 +143,17 @@ for lado in 'LR':
 # pepita: aparece na bateia, depois vai na mao direita
 nx,ny=P0['nug']
 mvn=[f"{p['nug'][0]-nx:.1f} {p['nug'][1]-ny:.1f}" for _,p in timeline]
-a(f'<g opacity="0">{{animado && <>'+degraus("x",[(0.36,0.92)])+animT("translate",mvn)+'</>}')
+a(f'<g opacity="0">{{animado && <>'+degraus("x",[(0.385,0.92)])+animT("translate",mvn)+'</>}')
 a(f'<g transform="translate({nx} {ny}) scale(1.6)"><path d="M-5.4-.8-1.6-6l6.4.9 2 5.9-4.4 4.6-6.1-.9z" fill="#e0ac3f" /><path d="M-5.4-.8-1.6-6l6.4.9-4.3 3.6z" fill="#f7d58a" /></g>')
 a('</g>')
 # brilho na bateia
-a(f'<path d="M0-8c.9 4.9 3.1 7.1 8 8-4.9.9-7.1 3.1-8 8-.9-4.9-3.1-7.1-8-8 4.9-.9 7.1-3.1 8-8z" transform="translate(424 276)" fill="#fff4d6" opacity="0">{{animado && <>'+degraus("x",[(0.37,0.46)])+'</>}</path>')
+a(f'<path d="M0-8c.9 4.9 3.1 7.1 8 8-4.9.9-7.1 3.1-8 8-.9-4.9-3.1-7.1-8-8 4.9-.9 7.1-3.1 8-8z" transform="translate(424 276)" fill="#fff4d6" opacity="0">{{animado && <>'+degraus("x",[(0.39,0.46)])+'</>}</path>')
+# gotas caindo da bateia logo que ela sai da agua
+for i,(dx,atraso) in enumerate([(-30,0),(-8,0.012),(14,0.006),(32,0.018)]):
+    t0=0.385+atraso
+    a(f'<circle cx="{400+dx}" cy="296" r="2.4" fill="#9fd0c0" opacity="0">{{animado && <>'+degraus("x",[(t0,t0+0.05)])+f'<animate attributeName="cy" dur="{DUR}s" repeatCount="indefinite" keyTimes="0;{t0:.3f};{t0+0.05:.3f};1" values="296;296;318;318" />'+'</>}</circle>')
 # rio na frente das pernas
-a('<path d="M0 318 C100 312 200 322 300 316 S500 312 600 318 700 322 800 316 V400 H0Z" fill="#1a5244" opacity=".96" />')
+a('<path d="M0 318 C100 312 200 322 300 316 S500 312 600 318 700 322 800 316 V400 H0Z" fill="#1a5244" opacity=".88" />')
 a('<g className="cg-correnteza">')
 for x,y,w in [(40,340,60),(180,356,90),(330,338,50),(470,350,80),(620,342,70),(720,362,50),(90,376,70),(540,378,90)]:
     a(f'<path d="M{x} {y}h{w}" stroke="#f3ecdc" strokeOpacity=".14" strokeWidth="2" strokeLinecap="round" />')
