@@ -82,9 +82,10 @@ textarea{min-height:96px;resize:vertical;width:100%}
 .brand h1{font-size:19px;display:flex}
 /* marca Garimpo */
 .logo{display:inline-flex;align-items:center;gap:10px}
+.logo svg{filter:drop-shadow(0 3px 8px rgba(0,0,0,.3))}
 /* entrada: o simbolo faz o papel do "g" de garimpo, alinhado a linha de base do texto */
 .login-marca{display:block;white-space:nowrap;font-weight:800;letter-spacing:-.05em}
-.login-art .login-marca svg{display:inline-block;width:1.16em;height:1.16em;max-width:none;vertical-align:-.405em;margin-right:.03em}
+.login-art .login-marca svg{display:inline-block;width:1.16em;height:1.16em;max-width:none;vertical-align:-.405em;margin-right:.03em;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
 .tabs{display:flex;gap:4px;align-self:stretch;overflow-x:auto;scrollbar-width:none;flex:1}
 .tab{flex:none;background:transparent;border:0;border-bottom:3px solid transparent;color:#a9bdb4;padding:0 12px;min-height:44px;font-weight:600;white-space:nowrap;display:inline-flex;align-items:center}
 .tab:hover{color:var(--areia)}

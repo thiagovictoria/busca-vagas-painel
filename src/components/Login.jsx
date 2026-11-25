@@ -24,7 +24,7 @@ export default function Login() {
       <section className="login-art">
         <div>
           {/* o simbolo e o proprio "g": logo + "arimpo" = garimpo */}
-          <h1 className="login-marca" aria-label="garimpo"><Simbolo fundo="#163d33" /><span aria-hidden="true">arimpo</span></h1>
+          <h1 className="login-marca" aria-label="garimpo"><Simbolo destaque /><span aria-hidden="true">arimpo</span></h1>
           <p>Encontre as vagas que <b>combinam com você</b>.</p>
         </div>
         <Garimpeiro />
