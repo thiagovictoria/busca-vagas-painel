@@ -3,10 +3,12 @@ import json, math
 DUR = 11  # segundos
 
 def P(**k): return k
+# curvado sobre a bateia: ombros baixos (tronco "encurtado" = inclinado para a frente), cabeca baixa,
+# joelhos dobrados e a bateia rente a agua
 base = dict(
- head=(400,150), neck=(400,176), shL=(373,186), shR=(427,186), hipL=(385,262), hipR=(415,262),
- kneeL=(380,300), kneeR=(420,300), footL=(381,342), footR=(419,342),
- elL=(358,228), elR=(442,228), haL=(368,262), haR=(432,262), pan=(400,268,0), nug=(410,265), sorriso=0)
+ head=(400,192), neck=(400,208), shL=(373,214), shR=(427,214), hipL=(385,268), hipR=(415,268),
+ kneeL=(373,304), kneeR=(427,304), footL=(381,342), footR=(419,342),
+ elL=(354,252), elR=(446,252), haL=(366,292), haR=(434,292), pan=(400,298,0), nug=(410,295), sorriso=0)
 
 def pose(b=None, **mud):
     p=dict(base if b is None else b); p.update(mud); return p
@@ -18,14 +20,16 @@ def mover(p, dy=0, dx=0, chaves=None):
     return q
 
 P0 = pose()
-P0a = pose(head=(396,151), haL=(352,258), haR=(418,270), elL=(350,226), elR=(434,232), pan=(385,266,-9), nug=(395,264))
-P0b = pose(head=(404,151), haL=(382,270), haR=(448,258), elL=(366,232), elR=(450,226), pan=(415,266,9), nug=(425,264))
-P1 = pose(head=(400,157), neck=(400,180), haL=(370,252), haR=(430,252), elL=(358,222), elR=(442,222), pan=(400,256,0), nug=(410,254))
-P2 = pose(P1, haR=(410,250), elR=(436,226), nug=(410,246))
+# peneirando: a bateia vai e volta, os bracos e a cabeca acompanham
+P0a = pose(head=(395,193), haL=(348,288), haR=(418,300), elL=(344,250), elR=(436,256), pan=(384,296,-9), nug=(394,293))
+P0b = pose(head=(405,193), haL=(382,300), haR=(452,288), elL=(364,256), elR=(456,250), pan=(416,296,9), nug=(426,293))
+# achou: ainda curvado, ergue um pouco a bateia e olha de perto
+P1 = pose(head=(400,188), haL=(368,282), haR=(432,282), elL=(356,246), elR=(444,246), pan=(400,288,0), nug=(410,285))
+P2 = pose(P1, haR=(410,280), elR=(438,252), nug=(410,276))
 # de pe, braco direito no alto com a pepita, bateia baixa na mao esquerda
 P3 = pose(head=(400,136), neck=(400,162), shL=(373,172), shR=(427,172), hipL=(385,252), hipR=(415,252),
           kneeL=(382,296), kneeR=(418,296), elL=(356,210), haL=(346,246), elR=(446,136), haR=(454,94),
-          pan=(336,254,-28), nug=(457,86), sorriso=1)
+          pan=(336,254,-28), nug=(457,86), sorriso=1, baixa=0)
 P4 = mover(P3, dy=16, chaves=[k for k in P3 if k not in ('footL','footR')])  # agacha antes do pulo
 P4 = pose(P4, kneeL=(370,304), kneeR=(430,304))
 P5 = mover(P3, dy=-58, chaves=[k for k in P3 if k not in ('footL','footR')])  # no ar
@@ -101,13 +105,24 @@ hx,hy=P0['head']
 desloc=[f"{p['head'][0]-hx:.1f} {p['head'][1]-hy:.1f}" for _,p in timeline]
 a('<g>{animado && <>'+animT("translate",desloc)+'</>}')
 a(f'<circle cx="{hx}" cy="{hy}" r="21" fill="{PELE}" />')
+# rosto: olhando para baixo enquanto peneira (olhos fechados/baixos, chapeu caido sobre a testa);
+# de frente quando levanta a pepita
+a(f'<g opacity="0">{{animado && <>'+degraus("x",[(0.50,0.93)])+'</>}')
 a(f'<circle cx="{hx-7}" cy="{hy+2}" r="2.2" fill="#2b1d14" /><circle cx="{hx+7}" cy="{hy+2}" r="2.2" fill="#2b1d14" />')
-sorr=[0]+[t for t,_ in timeline]
-a(f'<path d="M{hx-6} {hy+10} q6 4 12 0" fill="none" stroke="#2b1d14" strokeWidth="2.2" strokeLinecap="round">{{animado && <>'+inverso([(0.55,0.90)])+'</>}</path>')
+a('</g>')
+a(f'<path d="M{hx-6} {hy+10} q6 4 12 0" fill="none" stroke="#2b1d14" strokeWidth="2.2" strokeLinecap="round" opacity="0">{{animado && <>'+degraus("x",[(0.50,0.55),(0.90,0.93)])+'</>}</path>')
 a(f'<path d="M{hx-8} {hy+8} q8 12 16 0z" fill="#2b1d14" opacity="0">{{animado && <>'+degraus("x",[(0.55,0.90)])+'</>}</path>')
+a(f'<g>{{animado && <>'+inverso([(0.50,0.93)])+'</>}')
+a(f'<path d="M{hx-10} {hy+7} q3 2.5 6 0M{hx+4} {hy+7} q3 2.5 6 0" fill="none" stroke="#2b1d14" strokeWidth="2" strokeLinecap="round" />')
+a(f'<path d="M{hx-4} {hy+15} h8" stroke="#2b1d14" strokeWidth="2" strokeLinecap="round" opacity=".6" />')
+a('</g>')
+# chapeu: desce sobre a testa quando a cabeca esta baixa
+quedas=[f"0 {7 if p.get('baixa',1) else 0}" for _,p in timeline]
+a('<g>{animado && <>'+animT("translate",quedas)+'</>}')
 a(f'<ellipse cx="{hx}" cy="{hy-14}" rx="37" ry="7.5" fill="{CHAPEU}" />')
 a(f'<rect x="{hx-17}" y="{hy-37}" width="34" height="25" rx="10" fill="{CHAPEU}" />')
 a(f'<rect x="{hx-17}" y="{hy-22}" width="34" height="5" fill="{FAIXA}" />')
+a('</g>')
 a('</g>')
 # bateia (mao esquerda) — centro + giro
 px,py,_=P0['pan']
@@ -132,7 +147,7 @@ a(f'<g opacity="0">{{animado && <>'+degraus("x",[(0.36,0.92)])+animT("translate"
 a(f'<g transform="translate({nx} {ny}) scale(1.6)"><path d="M-5.4-.8-1.6-6l6.4.9 2 5.9-4.4 4.6-6.1-.9z" fill="#e0ac3f" /><path d="M-5.4-.8-1.6-6l6.4.9-4.3 3.6z" fill="#f7d58a" /></g>')
 a('</g>')
 # brilho na bateia
-a(f'<path d="M0-8c.9 4.9 3.1 7.1 8 8-4.9.9-7.1 3.1-8 8-.9-4.9-3.1-7.1-8-8 4.9-.9 7.1-3.1 8-8z" transform="translate(424 248)" fill="#fff4d6" opacity="0">{{animado && <>'+degraus("x",[(0.37,0.46)])+'</>}</path>')
+a(f'<path d="M0-8c.9 4.9 3.1 7.1 8 8-4.9.9-7.1 3.1-8 8-.9-4.9-3.1-7.1-8-8 4.9-.9 7.1-3.1 8-8z" transform="translate(424 276)" fill="#fff4d6" opacity="0">{{animado && <>'+degraus("x",[(0.37,0.46)])+'</>}</path>')
 # rio na frente das pernas
 a('<path d="M0 318 C100 312 200 322 300 316 S500 312 600 318 700 322 800 316 V400 H0Z" fill="#1a5244" opacity=".96" />')
 a('<g className="cg-correnteza">')
