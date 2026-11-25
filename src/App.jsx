@@ -198,7 +198,7 @@ export default function App() {
             onPeriodo={(p) => { setPeriodo(p); guardar.set("periodo", p); setSelVisao((s) => ({ ...s, tempo: null })); }} onAbrir={setAberta} />
         ) : (<>
         <div className="bar">
-          {(aba === "vagas" || filtrando) && <div className="bar-top">
+          <div className="bar-top">
             {aba === "vagas" ? (
               <div className="chips" role="group" aria-label="Situação">
                 {Object.entries(SITUACOES).map(([k, x]) => (
@@ -208,8 +208,8 @@ export default function App() {
                 ))}
               </div>
             ) : <span />}
-            {filtrando && <button className="btn sm soft" type="button" onClick={limpar}>✕ Limpar filtros</button>}
-          </div>}
+            <button className="btn sm soft" type="button" onClick={limpar} disabled={!filtrando}>✕ Limpar filtros</button>
+          </div>
           <div className={"filtros" + (aba === "candidaturas" ? " f3" : "")}>
             <label className="busca">Buscar
               <input type="search" placeholder="Cargo ou empresa" value={busca} onChange={(e) => setBusca(e.target.value)} />

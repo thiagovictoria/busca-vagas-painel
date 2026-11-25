@@ -40,7 +40,7 @@ busca-vagas-painel/
 
 ## Candidaturas: kanban
 
-Ao clicar em "Inscrever" numa vaga, ela vai direto para **Em análise** (com a data da inscrição). Na aba Candidaturas, cada etapa é uma coluna — Em análise, Entrevista, Proposta, Contratado, Não avançou — e o cartão muda de etapa arrastando ou pelo "Mover para". Cada mudança fica no histórico com data e hora.
+Ao clicar em "Inscrever" numa vaga, ela vai direto para **Em análise** (com a data da inscrição). Na aba Candidaturas, cada etapa é uma coluna — Em análise, Teste, Entrevista, Contratado, Não avançou — e o cartão muda de etapa arrastando ou pelo "Mover para". Cada mudança fica no histórico com data e hora.
 
 ## Visão geral: filtro cruzado
 

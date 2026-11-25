@@ -4,7 +4,7 @@ import { fData, fLocal, ms } from "../format.js";
 import { Anel } from "./graficos.jsx";
 
 // cor de cada etapa (bolinha no titulo da coluna)
-const COR_ETAPA = { em_analise: "var(--s3)", entrevista: "var(--s2)", proposta: "var(--primary)", contratado: "var(--s1)", reprovado: "var(--faint)" };
+const COR_ETAPA = { em_analise: "var(--s3)", case: "var(--s5)", entrevista: "var(--s2)", contratado: "var(--s1)", reprovado: "var(--s4)" };
 
 /**
  * Kanban das candidaturas: uma coluna por etapa. Arraste o cartao para outra coluna

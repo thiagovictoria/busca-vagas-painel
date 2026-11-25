@@ -20,7 +20,7 @@
   --primary-text:light-dark(#1f5c4c,#7fd0b8);--primary-soft:light-dark(#e2efe9,#173a31);
   --ouro:#e0ac3f;--ouro-claro:#f7d58a;--ouro-text:light-dark(#8a6410,#f0c25a);--ouro-soft:light-dark(#fbf0d6,#2f2714);
   --bar:light-dark(#2f6b5a,#5fae96);
-  --s1:light-dark(#0b8a6a,#1a9a77);--s2:light-dark(#d99a0b,#c98500);--s3:light-dark(#2a78d6,#3987e5);--s4:light-dark(#d9483b,#e0604c);
+  --s1:light-dark(#0b8a6a,#1a9a77);--s2:light-dark(#d99a0b,#c98500);--s3:light-dark(#2a78d6,#3987e5);--s4:light-dark(#d9483b,#e0604c);--s5:light-dark(#7a5cc7,#9a80e0);
   --alert-ink:light-dark(#b8321f,#ff8f7d);--alert-soft:light-dark(#fdeeec,#2c1a18);
   --grid:light-dark(#ece6d9,#1a2722);
   --shadow:0 1px 2px rgba(15,46,38,.06)}
@@ -315,3 +315,5 @@ dialog::backdrop{background:rgba(10,14,20,.5)}
 .kvazio{margin:0;padding:18px 8px;text-align:center;font-size:13px;color:var(--faint);border:1px dashed var(--line);border-radius:10px}
 .filtros.f3{grid-template-columns:minmax(0,2fr) repeat(2,minmax(0,1fr))}
 @media(max-width:760px){.kanban{grid-template-columns:repeat(5,minmax(78vw,1fr))}.filtros.f3{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.btn.soft:disabled{opacity:.4;cursor:default;border-color:transparent}

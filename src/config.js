@@ -11,7 +11,7 @@ export const STATUS = {
   aprovada: "Quero me inscrever",
   inscrita: "Inscrito",
   em_analise: "Em análise",
-  case: "Case",
+  case: "Teste",
   entrevista: "Entrevista",
   proposta: "Proposta",
   contratado: "Contratado",
@@ -24,11 +24,11 @@ export const EM_PROCESSO = ["inscrita", "em_analise", "case", "entrevista", "pro
 export const FIM = ["descartada", "reprovado", "sem_retorno"];
 export const GRUPOS_CAND = [...PIPE, "reprovado", "sem_retorno"];
 // Etapas do kanban de candidaturas (poucas, de proposito). Situacoes antigas caem na etapa equivalente.
-export const ETAPAS_KANBAN = ["em_analise", "entrevista", "proposta", "contratado", "reprovado"];
-export const NOME_ETAPA = { em_analise: "Em análise", entrevista: "Entrevista", proposta: "Proposta", contratado: "Contratado", reprovado: "Não avançou" };
+export const ETAPAS_KANBAN = ["em_analise", "case", "entrevista", "contratado", "reprovado"];
+export const NOME_ETAPA = { em_analise: "Em análise", case: "Teste", entrevista: "Entrevista", contratado: "Contratado", reprovado: "Não avançou" };
 export const colunaKanban = (status) =>
-  ({ aprovada: "em_analise", inscrita: "em_analise", em_analise: "em_analise", case: "entrevista", entrevista: "entrevista",
-     proposta: "proposta", contratado: "contratado", reprovado: "reprovado", sem_retorno: "reprovado" })[status] || null;
+  ({ aprovada: "em_analise", inscrita: "em_analise", em_analise: "em_analise", case: "case", entrevista: "entrevista",
+     proposta: "entrevista", contratado: "contratado", reprovado: "reprovado", sem_retorno: "reprovado" })[status] || null;
 // escolhas no detalhe da vaga: voltar para avaliar, as etapas do kanban ou descartar
 export const ESCOLHAS_STATUS = ["nova", ...ETAPAS_KANBAN, "descartada"];
 // ate que etapa cada situacao chegou (reprovado e sem retorno: ao menos inscrito)
