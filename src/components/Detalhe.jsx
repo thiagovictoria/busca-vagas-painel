@@ -132,7 +132,7 @@ export default function Detalhe({ it, onFechar, onSalvar, aviso }) {
                 <time>{fHora(h.alterado_em)}</time>
                 <span>
                   {h.status_anterior && (STATUS[h.status_anterior] || h.status_anterior) + " → "}
-                  <b>{STATUS[h.status_novo] || h.status_novo}</b> · {h.origem === "usuario" ? "você" : "robô"}
+                  <b>{STATUS[h.status_novo] || h.status_novo}</b> · {h.origem === "usuario" ? "você" : h.origem === "telegram" ? "você · Telegram" : "robô"}
                 </span>
               </li>
             ))}
