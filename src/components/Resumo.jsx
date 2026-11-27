@@ -27,7 +27,7 @@ export default function Resumo({ itens }) {
     SITUACOES.eliminadas.f(i) || SITUACOES.encerradas.f(i) || SITUACOES.descartadas.f(i));
   const blocos = [
     ["lupa", "var(--mute)", itens.length, "Vagas encontradas"],
-    ["x", "var(--mute)", desconsideradas.length, "Vagas desconsideradas"],
+    ["x", "var(--alert-ink)", desconsideradas.length, "Vagas desconsideradas"],
     ["lista", "var(--ouro-text)", paraAvaliar.length, "Para avaliar"],
     ["check", "var(--primary-text)", itens.filter((i) => (ETAPA[i.status] ?? 0) >= 2).length, "Inscrições feitas"],
   ];
