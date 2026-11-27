@@ -9,17 +9,17 @@ Painel em **React + CSS** (Vite) para avaliar vagas e acompanhar candidaturas.
 Os dados ficam no Supabase e só aparecem com login (cadastro de novos usuários desligado e RLS ativo).
 A chave no código é a chave **publicável** do Supabase, feita para ficar em páginas públicas.
 
-No ar: https://thiagovictoria.github.io/busca-vagas-painel/
+No ar: https://thiagovictoria.github.io/garimpo/
 (cada push na `main` gera o build e publica sozinho, pelo workflow `.github/workflows/deploy.yml`).
 
 ## Estrutura
 
 ```
-busca-vagas-painel/
+garimpo/
 ├── .github/workflows/deploy.yml   build + publicação no GitHub Pages
 ├── index.html                     casca da página (carrega src/main.jsx)
 ├── package.json                   dependências (React, Vite, supabase-js)
-├── vite.config.js                 base = /busca-vagas-painel/
+├── vite.config.js                 base = /garimpo/
 └── src/
     ├── main.jsx                   liga o React na página
     ├── App.jsx                    login, carga dos dados, abas, filtros, lista
